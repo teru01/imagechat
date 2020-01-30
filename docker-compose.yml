@@ -3,7 +3,7 @@ services:
     server:
         build: ./server
         ports:
-            - 8888:8888
+            - 3000:8888
         volumes:
             - ./server:/go/src/app
     client:
@@ -13,3 +13,19 @@ services:
         volumes:
             - ./client:/app
         command: yarn serve
+
+    web:
+        image: nginx:1.17-alpine
+        depends_on:
+            - server
+        ports:
+            - 10080:80
+        volumes:
+            - ./server:/work
+            - ./logs:/var/log/nginx
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        environment:
+            - TZ="Asia/Tokyo"
+
+    db:
+        
