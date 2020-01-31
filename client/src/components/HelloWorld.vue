@@ -1,6 +1,10 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <h3>name</h3>
+    <input type="text" name="name" v-model="your_name" />
+    <button class="btn" @click="send" id="sendname">send!!</button>
+    <p v-if=result>{{result}}</p>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -31,10 +35,28 @@
 </template>
 
 <script>
+import api from "../api/index.js"
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+      return {
+          your_name: "",
+          result: "",
+      };
+  },
+
+  methods: {
+      async send() {
+        const response = await api().post('/hoge', {name: this.your_name}).catch(err => err.response || err)
+        if (response.status !== 200) {
+            this.result = "ERROR"
+        } else {
+            this.result ="success!!"
+        }
+      }
   }
 }
 </script>
