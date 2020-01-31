@@ -2,12 +2,14 @@ version: '3'
 services:
     server:
         build: ./server
-        ports:
-            - 3000:8888
+        expose:
+            - 8888
         volumes:
             - ./server:/go/src/app
         environment:
-            - DSN=sheep:secret@/photoapp
+            - DSN=root:secret@tcp(db)/photoapp
+        restart: always
+
     client:
         build: ./client
         ports:
@@ -31,6 +33,8 @@ services:
 
     db:
         image: mysql:8.0
+        expose:
+            - 3306
         volumes:
             - db-store:/var/lib/mysql
             - ./logs:/var/log/mysql
