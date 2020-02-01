@@ -51,7 +51,7 @@ export default {
   methods: {
       async send() {
         const response = await api().post('/hoge', {name: this.your_name}).catch(err => err.response || err)
-        if (response.status !== 200) {
+        if (response.status !== 201) {
             this.result = "ERROR"
         } else {
             this.result ="success!!"
