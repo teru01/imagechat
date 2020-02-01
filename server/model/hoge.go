@@ -22,6 +22,10 @@ func Insert(db *gorm.DB, value string) error {
 
 func HogeSelect(db *gorm.DB, cond *map[string]interface{} ,offset , limit int) ([]Hoge, error) {
 	hoges := []Hoge{}
-	result := db.Where(*cond).Offset(offset).Limit(limit).Find(&hoges)
+	query := db.Offset(offset).Limit(limit)
+	if cond != nil {
+		query = query.Where(*cond)
+	}
+	result := query.Find(&hoges)
 	return hoges, result.Error
 }
