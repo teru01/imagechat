@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo/v4"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
