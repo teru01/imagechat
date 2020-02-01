@@ -2,9 +2,8 @@ package controller
 
 import (
 	"net/http"
-	// "github.com/labstack/echo"
-	"github.com/teru01/image/model"
 
+	"github.com/teru01/image/server/model"
 )
 
 func IndexGet(c *model.DBContext) error {

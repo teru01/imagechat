@@ -1,18 +1,15 @@
 package main
 
 import (
-	"github.com/labstack/echo"
-	// "github.com/labstack/echo/middleware"
-	// "database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	// "github.com/jinzhu/gorm"
-	// _ "github.com/jinzhu/gorm/dialects/"
-	"github.com/teru01/image/controller"
-	"github.com/teru01/image/model"
+	"fmt"
+	"os"
 
-	// "net/http"
-	// "os"
-	// "log"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/teru01/image/server/controller"
+	"github.com/teru01/image/server/model"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {

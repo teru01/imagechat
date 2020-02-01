@@ -1,4 +1,4 @@
-module github.com/teru01/image
+module github.com/teru01/image/server
 
 go 1.13
 
