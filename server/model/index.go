@@ -16,7 +16,7 @@ type DBContext struct {
 
 func ConnectDB() *gorm.DB {
 	dsn := os.Getenv("DSN")
-	db, err := gorm.Open("mysql", dsn)
+	db, err := gorm.Open("mysql", dsn + "?parseTime=true")
 	if err != nil {
 		log.Fatal(err)
 	}
