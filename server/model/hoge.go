@@ -19,3 +19,9 @@ type Hoge struct {
 func Insert(db *gorm.DB, value string) error {
 	return db.Create(&Hoge{HogeForm: HogeForm{value}}).Error
 }
+
+func HogeSelect(db *gorm.DB, cond *map[string]interface{} ,offset , limit int) ([]Hoge, error) {
+	hoges := []Hoge{}
+	result := db.Where(*cond).Offset(offset).Limit(limit).Find(&hoges)
+	return hoges, result.Error
+}
