@@ -16,17 +16,10 @@ func main() {
 	db := model.ConnectDB()
 	defer db.Close()
 	e := echo.New()
-	// e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-	// 	return func(c echo.Context) error {
-	// 		cc := &model.DBContext{c, db}
-	// 		return next(cc)
-	// 	}
-	// })
-	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig {
-	// 	AllowOrigins: []string{"*"},
-	// 	AllowMethods: []string{http.MethodGet, http.MethodPost},
-	// }))
 
+	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+		fmt.Fprintf(os.Stderr, "request: %v\n", string(reqBody))
+	}))
 	e.GET("/", func(c echo.Context) error {
 		return controller.IndexGet(&model.DBContext{c, db})
 	})
