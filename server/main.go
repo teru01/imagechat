@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/teru01/image/server/controller"
 	"github.com/teru01/image/server/model"
-	"github.com/jinzhu/gorm"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,9 +19,18 @@ func main() {
 	defer db.Close()
 	e := echo.New()
 
+	logFile, err := os.OpenFile("logs/echo.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		panic("failed to open log file: " + err.Error())
+	}
+
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig {
+		Output: io.MultiWriter(logFile, os.Stdout),
+	}))
 	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
 		fmt.Fprintf(os.Stderr, "request: %v\n", string(reqBody))
 	}))
+
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/hoges", handlerWrapper(controller.FetchHoges, db))
 	e.GET("/hoges/:id", handlerWrapper(controller.FetchHoge, db))
@@ -36,3 +46,4 @@ func handlerWrapper(f func (c *model.DBContext) error, db *gorm.DB) (func (echo.
 		return f(&model.DBContext{ec, db})
 	}
 }
+
