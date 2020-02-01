@@ -6,12 +6,10 @@ import (
 	"github.com/teru01/image/server/model"
 )
 
-func IndexGet(c *model.DBContext) error {
-	return c.String(http.StatusOK, "hello")
+type Err struct {
+	Description string `json: "description"`
 }
 
-func HandleHoge(c *model.DBContext) error {
-	name := c.FormValue("name")
-	model.Save(c.Db, name)
-	return c.String(http.StatusOK, "name: " + name)
+func IndexGet(c *model.DBContext) error {
+	return c.String(http.StatusOK, "hello")
 }
