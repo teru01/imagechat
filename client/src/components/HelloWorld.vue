@@ -6,7 +6,7 @@
     <button class="btn" @click="send" id="sendname">send!!</button>
     <p v-if="result">{{result}}</p>
     <button v-if="current_page > 0" class="btn" @click="prev" id="pref">prev</button>
-    <button v-if="!isLast"  class="btn" @click="next" id="next">next</button>
+    <button v-if="!isLast" class="btn" @click="next" id="next">next</button>
     <table>
       <tr v-for="name in names" :key="name.ID">
         <td>{{name.ID}}</td>
@@ -44,13 +44,14 @@ export default {
       } else {
         this.result = "success!!";
       }
+      this.reload()
     },
 
     async prev() {
       if (this.current_page <= 0) {
         return;
       }
-      this.isLast = false
+      this.isLast = false;
       this.current_page -= 1;
       const response = await api()
         .get(
@@ -80,22 +81,26 @@ export default {
         this.result = "success!!";
         this.names = response.data;
         if (response.data.length < ROW_PER_PAGE) {
-            this.isLast = true
+          this.isLast = true;
         }
+      }
+    },
+
+    async reload() {
+      const response = await api()
+        .get("/hoges")
+        .catch(err => err.response || err);
+      if (response.status !== 200) {
+        this.result = "ERROR";
+      } else {
+        this.result = "success!!";
+        this.names = response.data;
       }
     }
   },
 
   mounted: async function() {
-    const response = await api()
-      .get("/hoges")
-      .catch(err => err.response || err);
-    if (response.status !== 200) {
-      this.result = "ERROR";
-    } else {
-      this.result = "success!!";
-      this.names = response.data;
-    }
+    this.reload();
   }
 };
 </script>
