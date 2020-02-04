@@ -4,11 +4,19 @@ import (
 	"fmt"
 	"regexp"
 	"testing"
+	
 
 	"github.com/labstack/echo/v4"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/teru01/image/server/model"
 )
+
+var e *echo.echo
+
+func setUp() {
+	e := echo.New()
+
+}
 func TestFetchHoges(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -27,7 +35,6 @@ func TestFetchHoges(t *testing.T) {
 	)
 	mock.ExpectCommit()
 
-	e := echo.New()
 	cx := model.DBContext{e.NewContext(), db}
 	err := FetchHoges(cx)
 }
