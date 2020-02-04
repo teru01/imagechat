@@ -4,6 +4,8 @@ services:
         build: ./server
         expose:
             - 8888
+        depends_on:
+            - db
         volumes:
             - ./server:/go/src/app
         environment:
