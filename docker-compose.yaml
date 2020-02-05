@@ -29,8 +29,6 @@ services:
         volumes:
             - ./server:/work
             - ./logs:/var/log/nginx
-        env_file:
-            - ./nginx/.env
 
     db:
         build: ./mysql
