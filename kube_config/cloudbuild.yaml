@@ -8,9 +8,4 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/client', '-f', './client/Dockerfile.prod', './client']
 
-#   - name: 'gcr.io/cloud-builders/kubectl'
-#     args: ['create', 'secret', 'generic', 'server-secret', '--from-file=./server/.env']
-#   - name: 'gcr.io/cloud-builders/kubectl'
-#     args: ['create', 'secret', 'generic', 'mysql-secret', '--from-file=./mysql/.env']
-
 images: ['gcr.io/$PROJECT_ID/server', 'gcr.io/$PROJECT_ID/db', 'gcr.io/$PROJECT_ID/web', 'gcr.io/$PROJECT_ID/client']
