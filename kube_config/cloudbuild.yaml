@@ -1,12 +1,12 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/server:1.0', '-f', ./server/Dockerfile.prod']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/server:1.0', '-f', ./server/Dockerfile.prod', './server']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/db:1.0', './mysql']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/web:1.0', '-f', './nginx/Dockerfile.prod']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/web:1.0', '-f', './nginx/Dockerfile.prod', './nginx']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/client:1.0', '-f', './client/Dockerfile.prod']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/client:1.0', '-f', './client/Dockerfile.prod', './client']
 
 #   - name: 'gcr.io/cloud-builders/kubectl'
 #     args: ['create', 'secret', 'generic', 'server-secret', '--from-file=./server/.env']
