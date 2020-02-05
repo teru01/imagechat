@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -19,13 +18,8 @@ func main() {
 	defer db.Close()
 	e := echo.New()
 
-	logFile, err := os.OpenFile("logs/echo.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		panic("failed to open log file: " + err.Error())
-	}
-
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig {
-		Output: io.MultiWriter(logFile, os.Stdout),
+		Output: os.Stdout,
 	}))
 	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
 		fmt.Fprintf(os.Stderr, "request: %v\n", string(reqBody))
