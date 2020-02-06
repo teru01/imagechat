@@ -21,9 +21,9 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig {
 		Output: os.Stdout,
 	}))
-	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		fmt.Fprintf(os.Stderr, "request: %v\n", string(reqBody))
-	}))
+	// e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+	// 	fmt.Fprintf(os.Stderr, "request: %v\n", string(reqBody))
+	// }))
 
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/hoges", handlerWrapper(controller.FetchHoges, db))
