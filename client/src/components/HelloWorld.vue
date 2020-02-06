@@ -106,6 +106,9 @@ export default {
       } else {
         this.result = "success!!";
         this.items = response.data;
+        if (response.data.length < ROW_PER_PAGE) {
+          this.isLast = true;
+        }
       }
     },
 
