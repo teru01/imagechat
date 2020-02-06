@@ -9,6 +9,7 @@ import (
 
 type HogeForm struct {
 	Name string `json: "name" gorm:"type:varchar(255)"`
+	ImageUrl string `json: "image_url" gorm:"type:varchar(65536)"`
 }
 
 type Hoge struct {
@@ -16,8 +17,8 @@ type Hoge struct {
 	HogeForm
 }
 
-func Insert(db *gorm.DB, value string) error {
-	return db.Create(&Hoge{HogeForm: HogeForm{value}}).Error
+func Insert(db *gorm.DB, value ,imageUrl string) error {
+	return db.Create(&Hoge{HogeForm: HogeForm{Name: value, ImageUrl: imageUrl}}).Error
 }
 
 func HogeSelect(db *gorm.DB, cond *map[string]interface{} ,offset , limit int) ([]Hoge, error) {

@@ -3,14 +3,19 @@
     <h1>{{ msg }}</h1>
     <h3>name</h3>
     <input type="text" name="name" v-model="your_name" />
+    <input class="form__item" type="file" @change="onFileChange" />
+    <output class="form__output" v-if="preview">
+      <img height="200px" :src="preview" alt />
+    </output>
     <button class="btn" @click="send" id="sendname">send!!</button>
     <p v-if="result">{{result}}</p>
     <button v-if="current_page > 0" class="btn" @click="prev" id="pref">prev</button>
     <button v-if="!isLast" class="btn" @click="next" id="next">next</button>
     <table>
-      <tr v-for="name in names" :key="name.ID">
-        <td>{{name.ID}}</td>
-        <td>{{name.Name}}</td>
+      <tr v-for="item in items" :key="item.ID">
+        <td>{{item.ID}}</td>
+        <td>{{item.Name}}</td>
+        <td><img height="200px" :src="item.ImageUrl"></td>
       </tr>
     </table>
   </div>
@@ -30,21 +35,27 @@ export default {
       result: "",
       names: [],
       current_page: 0,
-      isLast: false
+      isLast: false,
+      preview: null,
+      photo: null,
+      items: []
     };
   },
 
   methods: {
     async send() {
+      const formData = new FormData();
+      formData.append("photo", this.photo);
+      formData.append("name", this.your_name);
       const response = await api()
-        .post("/hoges", { name: this.your_name })
+        .post("/hoges", formData)
         .catch(err => err.response || err);
       if (response.status !== 201) {
         this.result = "ERROR";
       } else {
         this.result = "success!!";
       }
-      this.reload()
+      this.reload();
     },
 
     async prev() {
@@ -63,7 +74,7 @@ export default {
         this.result = "ERROR";
       } else {
         this.result = "success!!";
-        this.names = response.data;
+        this.items = response.data;
       }
     },
 
@@ -79,7 +90,7 @@ export default {
         this.result = "ERROR";
       } else {
         this.result = "success!!";
-        this.names = response.data;
+        this.items = response.data;
         if (response.data.length < ROW_PER_PAGE) {
           this.isLast = true;
         }
@@ -94,9 +105,26 @@ export default {
         this.result = "ERROR";
       } else {
         this.result = "success!!";
-        this.names = response.data;
+        this.items = response.data;
       }
-    }
+    },
+
+    onFileChange(event) {
+      if (event.target.files.length === 0) {
+        return false;
+      }
+      if (!event.target.files[0].type.match("image.*")) {
+        return false;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        this.preview = e.target.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+      this.photo = event.target.files[0];
+    },
+
+    async submit() {}
   },
 
   mounted: async function() {
