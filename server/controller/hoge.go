@@ -8,6 +8,20 @@ import (
 	"github.com/teru01/image/server/model"
 )
 
+func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
+	srcImg, err := fileHeader.Open()
+	if err != nil {
+		return err
+	}
+	defer srcImg.Close()
+
+	_, err = io.Copy(writer, srcImg)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func RegisterHoge(c *model.DBContext) error {
 	h := new(model.HogeForm)
 	if err := c.Bind(h); err != nil {
