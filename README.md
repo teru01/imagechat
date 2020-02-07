@@ -15,7 +15,7 @@
 - GCB
 - GCR
 
-# ネットワーク構成図
+# システム構成図
 
 ![deploy](https://user-images.githubusercontent.com/27873650/73941207-2bc7e580-4930-11ea-9d5f-f25ffb9bb075.png)
 
