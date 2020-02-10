@@ -1,7 +1,6 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h3>name</h3>
     <input type="text" name="name" v-model="your_name" />
     <input class="form__item" type="file" @change="onFileChange" />
     <output class="form__output" v-if="preview">
@@ -11,7 +10,7 @@
     <p v-if="result">{{result}}</p>
     <button v-if="current_page > 0" class="btn" @click="prev" id="pref">prev</button>
     <button v-if="!isLast" class="btn" @click="next" id="next">next</button>
-    <table>
+    <table id="posts">
       <tr v-for="item in items" :key="item.ID">
         <td>{{item.ID}}</td>
         <td>{{item.Name}}</td>
@@ -151,5 +150,8 @@ li {
 }
 a {
   color: #42b983;
+}
+#posts {
+    margin: auto;
 }
 </style>
