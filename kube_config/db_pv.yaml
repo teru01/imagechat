@@ -13,3 +13,14 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: /data/mysql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
