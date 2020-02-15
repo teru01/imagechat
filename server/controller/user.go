@@ -38,7 +38,8 @@ func hashPassword(original string) (string, error) {
 
 func UpdateUser(c *model.DBContext) error {
 	var user model.User
-	id, err := strconv.Atoi(c.Param("id"))
+	_id, err := strconv.Atoi(c.Param("id"))
+	id := uint(_id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -64,7 +65,8 @@ func UpdateUser(c *model.DBContext) error {
 
 func DeleteUser(c *model.DBContext) error {
 	var user model.User
-	id, err := strconv.Atoi(c.Param("id"))
+	_id, err := strconv.Atoi(c.Param("id"))
+	id := uint(_id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
