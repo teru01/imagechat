@@ -8,8 +8,8 @@ import (
 
 
 type HogeForm struct {
-	Name string `json: "name" gorm:"type:varchar(255)"`
-	ImageUrl string `json: "image_url" gorm:"type:varchar(65536)"`
+	Name string `json:"name" gorm:"type:varchar(255)"`
+	ImageUrl string `json:"image_url" gorm:"type:varchar(65536)"`
 }
 
 type Hoge struct {
