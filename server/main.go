@@ -25,9 +25,13 @@ func main() {
 	e.GET("/hoges", handlerWrapper(controller.FetchHoges, db))
 	e.GET("/hoges/:id", handlerWrapper(controller.FetchHoge, db))
 	e.POST("/hoges", handlerWrapper(controller.RegisterHoge, db))
+	
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
 	e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
+
+	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
+	e.GET("/comments", handlerWrapper(controller.FetchComments, db))
 	e.Static("/static", "static")
 	e.Logger.Fatal(e.Start(":8888"))
 }
