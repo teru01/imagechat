@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/teru01/image/server/model"
@@ -11,18 +12,52 @@ import (
 
 
 func SignUp(c *model.DBContext) error {
-	var userForm model.UserForm
-	if err := c.Bind(&userForm); err != nil {
+	var user model.User
+	if err := c.Bind(&user); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	hashedPasswd, err := bcrypt.GenerateFromPassword([]byte(userForm.Password), bcrypt.DefaultCost)
+	hashed, err := hashPassword(user.Password)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	userForm.Password = fmt.Sprintf("%x", hashedPasswd)
-	form, err := model.Create(c.Db, &userForm)
+	user.Password = hashed
+	form, err := model.CreateUser(c.Db, &user)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusCreated, form)
+}
+
+func hashPassword(original string) (string, error) {
+	hashedPasswd, err := bcrypt.GenerateFromPassword([]byte(original), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", hashedPasswd), nil
+}
+
+func UpdateUser(c *model.DBContext) error {
+	var user model.User
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	user.ID = id
+	var m map[string]interface{} = map[string]interface{}{}
+	if err := c.Bind(&m); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	if _, ok := m["password"]; ok {
+		// password := 
+		hashed, err := hashPassword(m["password"].(string))
+		if err != nil {
+			return err
+		}
+		m["password"] = hashed
+	}
+	data, err := model.UpdateUser(c.Db, &user, m)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, data)
 }
