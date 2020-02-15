@@ -61,3 +61,16 @@ func UpdateUser(c *model.DBContext) error {
 	}
 	return c.JSON(http.StatusOK, data)
 }
+
+func DeleteUser(c *model.DBContext) error {
+	var user model.User
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	user.ID = id
+	if err = model.DeleteUser(c.Db, &user); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, user)
+}

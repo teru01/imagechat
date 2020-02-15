@@ -27,6 +27,7 @@ func main() {
 	e.POST("/hoges", handlerWrapper(controller.RegisterHoge, db))
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
+	e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
 	e.Static("/static", "static")
 	e.Logger.Fatal(e.Start(":8888"))
 }

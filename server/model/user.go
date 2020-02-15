@@ -22,3 +22,7 @@ func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error
 	}
 	return &User{ID: user.ID, Name: user.Name}, nil
 }
+
+func DeleteUser(db *gorm.DB, user *User) error {
+	return db.Delete(user).Error
+}
