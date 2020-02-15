@@ -24,5 +24,6 @@ func ConnectDB() *gorm.DB {
 
 	db.AutoMigrate(&Hoge{})
 	db.AutoMigrate(&User{})
+	db.AutoMigrate(&Comment{})
 	return db
 }
