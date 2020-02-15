@@ -25,6 +25,7 @@ func main() {
 	e.GET("/hoges", handlerWrapper(controller.FetchHoges, db))
 	e.GET("/hoges/:id", handlerWrapper(controller.FetchHoge, db))
 	e.POST("/hoges", handlerWrapper(controller.RegisterHoge, db))
+	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	e.Static("/static", "static")
 	e.Logger.Fatal(e.Start(":8888"))
 }
