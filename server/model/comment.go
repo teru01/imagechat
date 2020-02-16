@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -23,12 +22,19 @@ func CreateComment(db *gorm.DB, comment *Comment) (*Comment, error) {
 
 func FetchComments(db *gorm.DB, condition *map[string]interface{}) ([]Comment, error) {
 	comments := []Comment{}
-	users := []User{}
 	if condition != nil {
 		db = db.Where(*condition)
 	}
-	records := db.Preload("Comments").Find(&users)
-	fmt.Println(comments)
-	fmt.Println(users)
-	return comments, records.Error
+	records, err := db.Table("comments").Select("comments.id, comments.content, users.name").Joins("join users on comments.user_id = users.id").Rows()
+	if err != nil {
+		return comments, err
+	}
+	for records.Next() {
+		var c Comment
+		if err = records.Scan(&c.ID, &c.Content, &c.UserName); err != nil {
+			return comments, err
+		}
+		comments = append(comments, c)
+	}
+	return comments, nil
 }
