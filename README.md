@@ -24,4 +24,3 @@
 - HTTPS化
 - DBをフルマネージドなものに変更
 - ログ収集基盤（fluentdなど）
-- CI/CDパイプラインの整備（Spinnaker）
