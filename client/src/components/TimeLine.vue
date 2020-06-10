@@ -13,8 +13,8 @@
     <table id="posts">
       <tr v-for="item in items" :key="item.ID">
         <td>{{item.ID}}</td>
-        <td>{{item.Name}}</td>
-        <td><img height="200px" :src="item.ImageUrl"></td>
+        <td>{{item.name}}</td>
+        <td><img height="200px" :src="item.image_url"></td>
       </tr>
     </table>
   </div>

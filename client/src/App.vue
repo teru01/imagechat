@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Image Chat"/>
+    <TimeLine msg="Image Chat"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TimeLine from './components/TimeLine.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    TimeLine
   }
 }
 </script>
