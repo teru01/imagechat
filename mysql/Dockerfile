@@ -1,3 +1,2 @@
 FROM mysql:8.0
 COPY ./my.cnf /etc/mysql/conf.d/my.cnf
-COPY ./init/create_tables.sql /docker-entrypoint-initdb.d
