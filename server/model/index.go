@@ -22,7 +22,7 @@ func ConnectDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&Hoge{})
+	db.AutoMigrate(&Post{})
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Comment{})
 	return db

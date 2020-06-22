@@ -6,26 +6,26 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type HogeForm struct {
+type PostForm struct {
 	Name     string `json:"name" gorm:"type:varchar(255)"`
-	ImageUrl string `json:"image_url" gorm:"type:varchar(65536)"`
+	ImageUrl string `json:"image_url" gorm:"type:varchar(128)"`
 }
 
-type Hoge struct {
+type Post struct {
 	gorm.Model
-	HogeForm
+	PostForm
 }
 
 func Insert(db *gorm.DB, value, imageUrl string) error {
-	return db.Create(&Hoge{HogeForm: HogeForm{Name: value, ImageUrl: imageUrl}}).Error
+	return db.Create(&Post{PostForm: PostForm{Name: value, ImageUrl: imageUrl}}).Error
 }
 
-func HogeSelect(db *gorm.DB, cond *map[string]interface{}, offset, limit int) ([]Hoge, error) {
-	hoges := []Hoge{}
+func PostSelect(db *gorm.DB, cond *map[string]interface{}, offset, limit int) ([]Post, error) {
+	posts := []Post{}
 	query := db.Offset(offset).Limit(limit)
 	if cond != nil {
 		query = query.Where(*cond)
 	}
-	result := query.Find(&hoges)
-	return hoges, result.Error
+	result := query.Find(&posts)
+	return posts, result.Error
 }

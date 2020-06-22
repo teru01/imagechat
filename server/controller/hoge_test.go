@@ -25,7 +25,7 @@ func getDBMock() (*gorm.DB, sqlmock.Sqlmock, error) {
 	return gdb, mock, nil
 }
 
-func TestFetchHoges(t *testing.T) {
+func TestFetchPosts(t *testing.T) {
 	e := echo.New()
 	db, mock, err := getDBMock()
 	if err != nil {
@@ -33,13 +33,13 @@ func TestFetchHoges(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `hoges` WHERE `hoges`.`deleted_at` IS NULL LIMIT 2 OFFSET 0")).
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `posts` WHERE `posts`.`deleted_at` IS NULL LIMIT 2 OFFSET 0")).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "aaaaa").AddRow(2, "bbbbb"))
 
-	req := httptest.NewRequest(http.MethodGet, "/hoges?offset=0&limit=2", nil)
+	req := httptest.NewRequest(http.MethodGet, "/posts?offset=0&limit=2", nil)
 	rec := httptest.NewRecorder()
 	cx := model.DBContext{e.NewContext(req, rec), db}
-	err = FetchHoges(&cx)
+	err = FetchPosts(&cx)
 	if err != nil {
 		t.Fatal(err)
 	}
