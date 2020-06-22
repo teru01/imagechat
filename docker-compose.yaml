@@ -2,8 +2,8 @@ version: '3'
 services:
     server:
         build: ./server
-        expose:
-            - 8888
+        ports:
+            - 8888:8888
         depends_on:
             - db
         volumes:
@@ -22,20 +22,10 @@ services:
             - ./public:/app/public
         command: yarn serve
 
-    web:
-        build: ./nginx
-        depends_on:
-            - server
-        ports:
-            - 10080:80
-        volumes:
-            - ./server:/work
-            - ./logs:/var/log/nginx
-
     db:
         build: ./mysql
-        ports:
-            - 3306:3306
+        expose:
+            - 3306
         volumes:
             - db-store:/var/lib/mysql
             - ./logs:/var/log/mysql

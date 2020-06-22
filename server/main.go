@@ -17,15 +17,21 @@ func main() {
 	defer db.Close()
 	e := echo.New()
 
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig {
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Output: os.Stdout,
+	}))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:8080", "https://localhost:48080", "http://localhost", "https://localhost"},
+		AllowMethods:     []string{"GET, DELETE, OPTIONS, POST, PUT"},
+		AllowCredentials: true,
+		AllowHeaders:     []string{"Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"},
 	}))
 
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/hoges", handlerWrapper(controller.FetchHoges, db))
 	e.GET("/hoges/:id", handlerWrapper(controller.FetchHoge, db))
 	e.POST("/hoges", handlerWrapper(controller.RegisterHoge, db))
-	
+
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
 	e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
@@ -36,11 +42,9 @@ func main() {
 	e.Logger.Fatal(e.Start(":8888"))
 }
 
-
 // インタフェースの変換を行う
-func handlerWrapper(f func (c *model.DBContext) error, db *gorm.DB) (func (echo.Context) error) {
+func handlerWrapper(f func(c *model.DBContext) error, db *gorm.DB) func(echo.Context) error {
 	return func(ec echo.Context) error {
 		return f(&model.DBContext{ec, db})
 	}
 }
-

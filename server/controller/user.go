@@ -10,7 +10,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
 func SignUp(c *model.DBContext) error {
 	var user model.User
 	if err := c.Bind(&user); err != nil {
@@ -49,7 +48,7 @@ func UpdateUser(c *model.DBContext) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	if _, ok := m["password"]; ok {
-		// password := 
+		// password :=
 		hashed, err := hashPassword(m["password"].(string))
 		if err != nil {
 			return err
