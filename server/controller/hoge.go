@@ -87,7 +87,7 @@ func FetchHoges(c *model.DBContext) error {
 	}
 
 	hoges, err := model.HogeSelect(c.Db, nil, offset, limit)
-	if err != nil{
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, hoges)
@@ -95,7 +95,7 @@ func FetchHoges(c *model.DBContext) error {
 
 func FetchHoge(c *model.DBContext) error {
 	hoges, err := model.HogeSelect(c.Db, &map[string]interface{}{"id": c.Param("id")}, 0, 1)
-	if err != nil{
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
@@ -105,4 +105,3 @@ func FetchHoge(c *model.DBContext) error {
 
 	return c.JSON(http.StatusOK, hoges[0])
 }
-
