@@ -47,7 +47,7 @@ export default {
       formData.append("photo", this.photo);
       formData.append("name", this.your_name);
       const response = await api()
-        .post("/hoges", formData)
+        .post("/posts", formData)
         .catch(err => err.response || err);
       if (response.status !== 201) {
         this.result = "ERROR";
@@ -65,7 +65,7 @@ export default {
       this.current_page -= 1;
       const response = await api()
         .get(
-          `/hoges?offset=${ROW_PER_PAGE *
+          `/posts?offset=${ROW_PER_PAGE *
             this.current_page}&limit=${ROW_PER_PAGE}`
         )
         .catch(err => err.response || err);
@@ -81,7 +81,7 @@ export default {
       this.current_page += 1;
       const response = await api()
         .get(
-          `/hoges?offset=${ROW_PER_PAGE *
+          `/posts?offset=${ROW_PER_PAGE *
             this.current_page}&limit=${ROW_PER_PAGE}`
         )
         .catch(err => err.response || err);
@@ -98,7 +98,7 @@ export default {
 
     async reload() {
       const response = await api()
-        .get("/hoges")
+        .get("/posts")
         .catch(err => err.response || err);
       if (response.status !== 200) {
         this.result = "ERROR";

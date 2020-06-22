@@ -30,8 +30,8 @@ func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
 	return nil
 }
 
-func RegisterHoge(c *model.DBContext) error {
-	h := new(model.HogeForm)
+func RegisterPost(c *model.DBContext) error {
+	h := new(model.PostForm)
 
 	fileHeader, err := c.FormFile("photo")
 	if err != nil {
@@ -75,7 +75,7 @@ func RegisterHoge(c *model.DBContext) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-func FetchHoges(c *model.DBContext) error {
+func FetchPosts(c *model.DBContext) error {
 	offset, err := strconv.Atoi(c.QueryParam("offset"))
 	if err != nil {
 		offset = 0
@@ -86,22 +86,22 @@ func FetchHoges(c *model.DBContext) error {
 		limit = 20
 	}
 
-	hoges, err := model.HogeSelect(c.Db, nil, offset, limit)
+	posts, err := model.PostSelect(c.Db, nil, offset, limit)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, hoges)
+	return c.JSON(http.StatusOK, posts)
 }
 
-func FetchHoge(c *model.DBContext) error {
-	hoges, err := model.HogeSelect(c.Db, &map[string]interface{}{"id": c.Param("id")}, 0, 1)
+func FetchPost(c *model.DBContext) error {
+	posts, err := model.PostSelect(c.Db, &map[string]interface{}{"id": c.Param("id")}, 0, 1)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	if len(hoges) == 0 {
+	if len(posts) == 0 {
 		return echo.NewHTTPError(http.StatusNotFound, "Not Found")
 	}
 
-	return c.JSON(http.StatusOK, hoges[0])
+	return c.JSON(http.StatusOK, posts[0])
 }
