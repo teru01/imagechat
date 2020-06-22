@@ -22,16 +22,6 @@ services:
             - ./public:/app/public
         command: yarn serve
 
-    web:
-        build: ./nginx
-        depends_on:
-            - server
-        ports:
-            - 10080:80
-        volumes:
-            - ./server:/work
-            - ./logs:/var/log/nginx
-
     db:
         build: ./mysql
         ports:
