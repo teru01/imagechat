@@ -83,12 +83,11 @@ func RegisterPost(c *model.DBContext) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-
 func Insert(db *gorm.DB, value, imageUrl string) error {
 	return db.Create(&Post{PostForm: PostForm{Name: value, ImageUrl: imageUrl}}).Error
 }
 
-func SelectPost(db *gorm.DB, cond *map[string]interface{}, offset, limit int) ([]Post, error) {
+func SelectPosts(db *gorm.DB, cond *map[string]interface{}, offset, limit int) ([]Post, error) {
 	posts := []Post{}
 	query := db.Offset(offset).Limit(limit)
 	if cond != nil {
