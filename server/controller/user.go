@@ -26,10 +26,11 @@ func Login(c *database.DBContext) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	if err := user.Login(c); err != nil {
-		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	statusCode, err := user.Login(c)
+	if err != nil {
+		return echo.NewHTTPError(statusCode, err.Error())
 	}
-	return c.NoContent(http.StatusOK)
+	return c.JSON(statusCode, user)
 }
 
 // func UpdateUser(c *database.DBContext) error {
