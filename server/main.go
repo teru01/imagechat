@@ -8,12 +8,16 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/teru01/image/server/controller"
 	"github.com/teru01/image/server/database"
+	"github.com/teru01/image/server/model"
 
+	"github.com/labstack/echo-contrib/session"
+	"github.com/gorilla/sessions"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	db := database.ConnectDB()
+	InitializeDB(db)
 	defer db.Close()
 	e := echo.New()
 
@@ -26,6 +30,7 @@ func main() {
 		AllowCredentials: true,
 		AllowHeaders:     []string{"Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"},
 	}))
+	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/posts", handlerWrapper(controller.FetchPosts, db))
@@ -35,6 +40,8 @@ func main() {
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	// e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
 	// e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
+
+	e.POST("/session", handlerWrapper(controller.Login, db))
 
 	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
 	e.GET("/comments", handlerWrapper(controller.FetchComments, db))
@@ -47,4 +54,10 @@ func handlerWrapper(f func(c *database.DBContext) error, db *gorm.DB) func(echo.
 	return func(ec echo.Context) error {
 		return f(&database.DBContext{ec, db})
 	}
+}
+
+func InitializeDB(db *gorm.DB) {
+	db.AutoMigrate(&model.Post{})
+	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Comment{})
 }
