@@ -38,7 +38,7 @@ func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
 	return nil
 }
 
-func RegisterPost(c *model.DBContext) error {
+func SubmitPost(c *model.DBContext) error {
 	h := new(model.PostForm)
 
 	fileHeader, err := c.FormFile("photo")

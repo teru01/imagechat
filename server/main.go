@@ -30,7 +30,7 @@ func main() {
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/posts", handlerWrapper(controller.FetchPosts, db))
 	e.GET("/posts/:id", handlerWrapper(controller.FetchPost, db))
-	e.POST("/posts", handlerWrapper(controller.RegisterPost, db))
+	e.POST("/posts", handlerWrapper(controller.SubmitPost, db))
 
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
