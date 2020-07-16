@@ -1,39 +1,27 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/teru01/image/server/database"
+	"github.com/teru01/image/server/form"
 	"github.com/teru01/image/server/model"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func SignUp(c *database.DBContext) error {
-	var user model.User
-	if err := c.Bind(&user); err != nil {
+	var userForm form.UserForm
+	if err := c.Bind(&userForm); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	hashed, err := hashPassword(user.Password)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	user.Password = hashed
-	form, err := model.CreateUser(c.Db, &user)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	return c.JSON(http.StatusCreated, form)
-}
 
-func hashPassword(original string) (string, error) {
-	hashedPasswd, err := bcrypt.GenerateFromPassword([]byte(original), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
+	user := model.User{}
+	if err := user.CreateUser(c.Db, userForm); err != nil {
+		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	return fmt.Sprintf("%x", hashedPasswd), nil
+
+	return c.NoContent(http.StatusCreated)
 }
 
 func UpdateUser(c *database.DBContext) error {

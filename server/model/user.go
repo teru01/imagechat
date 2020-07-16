@@ -1,25 +1,42 @@
 package model
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
+	"github.com/teru01/image/server/form"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	ID        uint   `json:"id" gorm:"primary_key;auto_increment;not null"`
-	Name      string `json:"name" gorm:"type:varchar(255)"`
-	Email     string `json:"email" gorm:"type:varchar(255)"`
-	Password  string `json:"password" gorm:"type:varchar(255)"`
-	Comments  []Comment
-	CreatedAt time.Time `json:"created_at"`
+	gorm.Model
+	Name     string `json:"name" gorm:"type:varchar(255)"`
+	Email    string `json:"email" gorm:"type:varchar(255)"`
+	Password string `json:"password" gorm:"type:varchar(255)"`
+	Comments []Comment
 }
 
-func CreateUser(db *gorm.DB, user *User) (*User, error) {
-	if err := db.Create(user).Error; err != nil {
-		return nil, err
+func (user *User) CreateUser(db *gorm.DB, userForm *form.UserForm) error {
+	hashed, err := hashPassword(userForm.Password)
+	if err != nil {
+		return err
 	}
-	return &User{ID: user.ID, Name: user.Name}, nil
+	user.Password = hashed
+	user.Name = userForm.Name
+	user.Email = userForm.Email
+
+	if err := db.Create(user).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func hashPassword(original string) (string, error) {
+	hashedPasswd, err := bcrypt.GenerateFromPassword([]byte(original), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", hashedPasswd), nil
 }
 
 func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error) {
