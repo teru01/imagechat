@@ -5,6 +5,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
+	"github.com/teru01/image/server/database"
 )
 
 type User struct {
@@ -54,9 +57,22 @@ func hashPassword(original string) (string, error) {
 	return fmt.Sprintf("%x", hashedPasswd), nil
 }
 
-// func (user *User) Login(db *gorm.DB) error {
-
-// }
+func (user *User) Login(context *database.DBContext) error {
+	var authenticatedUser User
+	context.Db.Where("email = ? AND password = ?", user.Name, user.Password).First(&authenticatedUser)
+	sess, err := session.Get("session", context)
+	if err != nil {
+		return err
+	}
+	sess.Options = &sessions.Options{
+	  Path:     "/",
+	  MaxAge:   86400 * 7,
+	  HttpOnly: true,
+	}
+	sess.Values["user_id"] = authenticatedUser.Model.ID
+	sess.Save(context.Request(), context.Response())
+	return nil
+}
 
 // func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error) {
 // 	if err := db.Model(user).Update(m).Error; err != nil {

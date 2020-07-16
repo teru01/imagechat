@@ -20,16 +20,17 @@ func SignUp(c *database.DBContext) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-// func Login(c *database.DBContext) error {
-// 	var user model.User
-// 	if err := c.Bind(&user); err != nil {
-// 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-// 	}
+func Login(c *database.DBContext) error {
+	var user model.User
+	if err := c.Bind(&user); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 
-// 	if err := user.Login(c.Db); err != nil {
-// 		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-// 	}
-// }
+	if err := user.Login(c); err != nil {
+		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.NoContent(http.StatusOK)
+}
 
 // func UpdateUser(c *database.DBContext) error {
 // 	var user model.User
