@@ -7,6 +7,12 @@
       <img height="200px" :src="preview" alt />
     </output>
     <button class="btn" @click="send" id="sendname">send!!</button>
+
+    <input type="text" name="email" v-model="email" />
+    <input type="password" v-model="password" />
+    <button class="btn" @click="login" id="login">login</button>
+    <p v-if="login_status">{{login_status}}</p>
+
     <p v-if="result">{{result}}</p>
     <button v-if="current_page > 0" class="btn" @click="prev" id="pref">prev</button>
     <button v-if="!isLast" class="btn" @click="next" id="next">next</button>
@@ -32,12 +38,15 @@ export default {
     return {
       your_name: "",
       result: "",
+      email: "",
+      password: "",
       names: [],
       current_page: 0,
       isLast: false,
       preview: null,
       photo: null,
-      items: []
+      items: [],
+      login_status: "",
     };
   },
 
@@ -55,6 +64,19 @@ export default {
         this.result = "success!!";
       }
       this.reload();
+    },
+
+    async login() {
+      const response = await api().post(`/session`, {
+        'email': this.email,
+        'password': this.password
+      }).catch(err => err.response || err);
+      if (response.status !== 200) {
+        this.result = "ERROR"
+      } else {
+        this.result = "success!!";
+        this.login_status = `login name: ${response.name}`
+      }
     },
 
     async prev() {
