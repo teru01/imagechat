@@ -5,23 +5,21 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
-	"net/http"
 	"os"
 	"path"
+	"strings"
 
+	"cloud.google.com/go/storage"
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/teru01/image/server/form"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type PostForm struct {
-	Name     string `json:"name" gorm:"type:varchar(255)"`
-	ImageUrl string `json:"image_url" gorm:"type:varchar(128)"`
-}
-
 type Post struct {
 	gorm.Model
-	PostForm
+	form.PostForm
 }
 
 func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
@@ -38,18 +36,17 @@ func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
 	return nil
 }
 
-func SubmitPost(c *model.DBContext) error {
-	h := new(model.PostForm)
+func convertExtensionToContentType(ext string) string {
+	return "image/" + ext
+}
 
-	fileHeader, err := c.FormFile("photo")
-	if err != nil {
-		return err
-	}
-
-	name := uuid.New().String() + path.Ext(fileHeader.Filename)
+func SubmitPost(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.PostForm) error {
+	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
+	name := uuid.New().String() + fileExtension
 	var imageUrl string
-	// GCS処理
+
 	if os.Getenv("ENV_TYPE") == "prod" {
+		// GCS処理
 		imageUrl = fmt.Sprintf("https://storage.googleapis.com/%s/%s", os.Getenv("BUCKET_NAME"), name)
 		ctx := context.Background()
 		client, err := storage.NewClient(ctx)
@@ -58,7 +55,7 @@ func SubmitPost(c *model.DBContext) error {
 		}
 		writer := client.Bucket(os.Getenv("BUCKET_NAME")).Object(name).NewWriter(ctx)
 		defer writer.Close()
-		writer.ContentType = c.Request().Header.Get("Content-Type")
+		writer.ContentType = convertExtensionToContentType(fileExtension)
 		if err = uploadImage(fileHeader, writer); err != nil {
 			return err
 		}
@@ -74,17 +71,13 @@ func SubmitPost(c *model.DBContext) error {
 		}
 	}
 
-	if err := c.Bind(h); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	if err := model.Insert(c.Db, h.Name, imageUrl); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	return c.NoContent(http.StatusCreated)
+	return Insert(db, postForm.Name, imageUrl)
 }
 
 func Insert(db *gorm.DB, value, imageUrl string) error {
-	return db.Create(&Post{PostForm: PostForm{Name: value, ImageUrl: imageUrl}}).Error
+	return db.Create(&Post{
+		PostForm: form.PostForm{Name: value, ImageUrl: imageUrl},
+	}).Error
 }
 
 func SelectPosts(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Post, error) {
