@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -47,13 +48,22 @@ func SubmitPost(c *database.DBContext) error {
 	if err != nil {
 		return err
 	}
-
 	var postForm form.PostForm
 	postForm.Name = c.FormValue("name")
 
 	post := model.Post{}
-	if err := post.Submit(c.Db, fileHeader, postForm); err != nil {
+	if err := post.Submit(c.Db, fileHeader, postForm, getUploader()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)
+}
+
+// 環境に応じてUploaderを取得
+func getUploader() model.Uploader {
+	switch os.Getenv("ENV_TYPE") {
+	case "prod":
+		return &model.GCPUploader{}
+	default:
+		return &model.LocalUploader{}
+	}
 }
