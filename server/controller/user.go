@@ -5,23 +5,32 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/teru01/image/server/database"
-	"github.com/teru01/image/server/form"
 	"github.com/teru01/image/server/model"
 )
 
 func SignUp(c *database.DBContext) error {
-	var userForm form.UserForm
-	if err := c.Bind(&userForm); err != nil {
+	var user model.User
+	if err := c.Bind(&user); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-
-	user := model.User{}
-	if err := user.CreateUser(c.Db, userForm); err != nil {
+	if err := user.CreateUser(c.Db); err != nil {
 		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.NoContent(http.StatusCreated)
 }
+
+// func Login(c *database.DBContext) error {
+// 	var userForm form.UserForm
+// 	if err := c.Bind(&userForm); err != nil {
+// 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+// 	}
+
+// 	user := model.User{}
+// 	if err := user.Login(c.Db, userForm); err != nil {
+// 		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+// 	}
+// }
 
 // func UpdateUser(c *database.DBContext) error {
 // 	var user model.User

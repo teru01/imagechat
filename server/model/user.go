@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	"github.com/teru01/image/server/form"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,14 +15,12 @@ type User struct {
 	Comments []Comment
 }
 
-func (user *User) CreateUser(db *gorm.DB, userForm form.UserForm) error {
-	hashed, err := hashPassword(userForm.Password)
+func (user *User) CreateUser(db *gorm.DB) error {
+	hashed, err := hashPassword(user.Password)
 	if err != nil {
 		return err
 	}
 	user.Password = hashed
-	user.Name = userForm.Name
-	user.Email = userForm.Email
 
 	if err := db.Create(user).Error; err != nil {
 		return err
