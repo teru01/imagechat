@@ -16,7 +16,7 @@ type User struct {
 	Comments []Comment
 }
 
-func (user *User) CreateUser(db *gorm.DB, userForm *form.UserForm) error {
+func (user *User) CreateUser(db *gorm.DB, userForm form.UserForm) error {
 	hashed, err := hashPassword(userForm.Password)
 	if err != nil {
 		return err
@@ -39,13 +39,13 @@ func hashPassword(original string) (string, error) {
 	return fmt.Sprintf("%x", hashedPasswd), nil
 }
 
-func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error) {
-	if err := db.Model(user).Update(m).Error; err != nil {
-		return nil, err
-	}
-	return &User{ID: user.ID, Name: user.Name}, nil
-}
+// func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error) {
+// 	if err := db.Model(user).Update(m).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	return &User{ID: user.ID, Name: user.Name}, nil
+// }
 
-func DeleteUser(db *gorm.DB, user *User) error {
-	return db.Delete(user).Error
-}
+// func DeleteUser(db *gorm.DB, user *User) error {
+// 	return db.Delete(user).Error
+// }

@@ -33,8 +33,8 @@ func main() {
 	e.POST("/posts", handlerWrapper(controller.SubmitPost, db))
 
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
-	e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
-	e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
+	// e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
+	// e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
 
 	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
 	e.GET("/comments", handlerWrapper(controller.FetchComments, db))
