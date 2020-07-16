@@ -87,11 +87,11 @@ func Insert(db *gorm.DB, value, imageUrl string) error {
 	return db.Create(&Post{PostForm: PostForm{Name: value, ImageUrl: imageUrl}}).Error
 }
 
-func SelectPosts(db *gorm.DB, cond *map[string]interface{}, offset, limit int) ([]Post, error) {
+func SelectPosts(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Post, error) {
 	posts := []Post{}
 	query := db.Offset(offset).Limit(limit)
-	if cond != nil {
-		query = query.Where(*cond)
+	if condition != nil {
+		query = query.Where(*condition)
 	}
 	result := query.Find(&posts)
 	return posts, result.Error
