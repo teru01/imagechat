@@ -19,7 +19,8 @@ import (
 
 type Post struct {
 	gorm.Model
-	form.PostForm
+	Name     string `json:"name" gorm:"type:varchar(255)"`
+	ImageUrl string `json:"image_url" gorm:"type:varchar(128)"`
 }
 
 func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
@@ -76,7 +77,8 @@ func SubmitPost(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.Pos
 
 func Insert(db *gorm.DB, value, imageUrl string) error {
 	return db.Create(&Post{
-		PostForm: form.PostForm{Name: value, ImageUrl: imageUrl},
+		Name: value,
+		ImageUrl: imageUrl,
 	}).Error
 }
 
