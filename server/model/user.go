@@ -15,7 +15,25 @@ type User struct {
 	Comments []Comment
 }
 
-func (user *User) CreateUser(db *gorm.DB) error {
+func userAvailable(db *gorm.DB, name, email string) (bool, string) {
+	var users []User
+	db.Where("name = ?", name).Find(&users)
+	if len(users) != 0 {
+		return false, fmt.Sprintf("name %v is already used", name)
+	}
+	db.Where("email = ?", email).Find(&users)
+	if len(users) != 0 {
+		return false, fmt.Sprintf("email %v is already used", email)
+	}
+	return true, ""
+}
+
+func (user *User) SignUp(db *gorm.DB) error {
+	ok, msg := userAvailable(db, user.Name, user.Email)
+	if !ok {
+		return fmt.Errorf(msg)
+	}
+
 	hashed, err := hashPassword(user.Password)
 	if err != nil {
 		return err
@@ -35,6 +53,10 @@ func hashPassword(original string) (string, error) {
 	}
 	return fmt.Sprintf("%x", hashedPasswd), nil
 }
+
+// func (user *User) Login(db *gorm.DB) error {
+
+// }
 
 // func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error) {
 // 	if err := db.Model(user).Update(m).Error; err != nil {
