@@ -6,11 +6,12 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func SignUp(c *model.DBContext) error {
+func SignUp(c *database.DBContext) error {
 	var user model.User
 	if err := c.Bind(&user); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
@@ -35,7 +36,7 @@ func hashPassword(original string) (string, error) {
 	return fmt.Sprintf("%x", hashedPasswd), nil
 }
 
-func UpdateUser(c *model.DBContext) error {
+func UpdateUser(c *database.DBContext) error {
 	var user model.User
 	_id, err := strconv.Atoi(c.Param("id"))
 	id := uint(_id)
@@ -62,7 +63,7 @@ func UpdateUser(c *model.DBContext) error {
 	return c.JSON(http.StatusOK, data)
 }
 
-func DeleteUser(c *model.DBContext) error {
+func DeleteUser(c *database.DBContext) error {
 	var user model.User
 	_id, err := strconv.Atoi(c.Param("id"))
 	id := uint(_id)
