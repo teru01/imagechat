@@ -1,4 +1,4 @@
-package model
+package database
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/labstack/echo/v4"
+	"github.com/teru01/image/server/model"
 )
 
 type DBContext struct {
@@ -21,9 +22,12 @@ func ConnectDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	db.AutoMigrate(&Post{})
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Comment{})
+	Initialize(db)
 	return db
+}
+
+func Initialize(db *gorm.DB) {
+	db.AutoMigrate(&model.Post{})
+	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Comment{})
 }

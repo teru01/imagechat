@@ -9,7 +9,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
-	"github.com/teru01/image/server/model"
+	"github.com/teru01/image/server/database"
 )
 
 func getDBMock() (*gorm.DB, sqlmock.Sqlmock, error) {
@@ -38,7 +38,7 @@ func TestFetchPosts(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/posts?offset=0&limit=2", nil)
 	rec := httptest.NewRecorder()
-	cx := model.DBContext{e.NewContext(req, rec), db}
+	cx := database.DBContext{e.NewContext(req, rec), db}
 	err = FetchPosts(&cx)
 	if err != nil {
 		t.Fatal(err)

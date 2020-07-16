@@ -77,7 +77,7 @@ func SubmitPost(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.Pos
 
 func Insert(db *gorm.DB, value, imageUrl string) error {
 	return db.Create(&Post{
-		Name: value,
+		Name:     value,
 		ImageUrl: imageUrl,
 	}).Error
 }

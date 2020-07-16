@@ -5,11 +5,12 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/form"
 	"github.com/teru01/image/server/model"
 )
 
-func FetchPosts(c *model.DBContext) error {
+func FetchPosts(c *database.DBContext) error {
 	offset, err := strconv.Atoi(c.QueryParam("offset"))
 	if err != nil {
 		offset = 0
@@ -27,7 +28,7 @@ func FetchPosts(c *model.DBContext) error {
 	return c.JSON(http.StatusOK, posts)
 }
 
-func FetchPost(c *model.DBContext) error {
+func FetchPost(c *database.DBContext) error {
 	posts, err := model.SelectPosts(c.Db, &map[string]interface{}{"id": c.Param("id")}, 0, 1)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
@@ -40,7 +41,7 @@ func FetchPost(c *model.DBContext) error {
 	return c.JSON(http.StatusOK, posts[0])
 }
 
-func SubmitPost(c *model.DBContext) error {
+func SubmitPost(c *database.DBContext) error {
 	fileHeader, err := c.FormFile("photo")
 	if err != nil {
 		return err

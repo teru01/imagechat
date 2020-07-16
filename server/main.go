@@ -7,13 +7,13 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/teru01/image/server/controller"
-	"github.com/teru01/image/server/model"
+	"github.com/teru01/image/server/database"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	db := model.ConnectDB()
+	db := database.ConnectDB()
 	defer db.Close()
 	e := echo.New()
 
@@ -43,8 +43,8 @@ func main() {
 }
 
 // インタフェースの変換を行う
-func handlerWrapper(f func(c *model.DBContext) error, db *gorm.DB) func(echo.Context) error {
+func handlerWrapper(f func(c *database.DBContext) error, db *gorm.DB) func(echo.Context) error {
 	return func(ec echo.Context) error {
-		return f(&model.DBContext{ec, db})
+		return f(&database.DBContext{ec, db})
 	}
 }
