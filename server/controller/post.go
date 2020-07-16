@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/teru01/image/server/form"
 	"github.com/teru01/image/server/model"
 )
 
@@ -37,4 +38,21 @@ func FetchPost(c *model.DBContext) error {
 	}
 
 	return c.JSON(http.StatusOK, posts[0])
+}
+
+func SubmitPost(c *model.DBContext) error {
+	fileHeader, err := c.FormFile("photo")
+	if err != nil {
+		return err
+	}
+
+	var postForm form.PostForm
+	if err := c.Bind(postForm); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	if err := model.SubmitPost(c.Db, fileHeader, postForm); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.NoContent(http.StatusCreated)
 }
