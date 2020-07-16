@@ -1,15 +1,10 @@
 package model
 
 import (
-	"context"
-	"fmt"
-	"io"
 	"mime/multipart"
-	"os"
 	"path"
 	"strings"
 
-	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/teru01/image/server/form"
@@ -23,53 +18,19 @@ type Post struct {
 	ImageUrl string `json:"image_url" gorm:"type:varchar(128)"`
 }
 
-func uploadImage(fileHeader *multipart.FileHeader, writer io.Writer) error {
+func (p *Post) Submit(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.PostForm, uploader Uploader) error {
+	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
+	name := uuid.New().String() + fileExtension
+
 	srcImg, err := fileHeader.Open()
 	if err != nil {
 		return err
 	}
 	defer srcImg.Close()
 
-	_, err = io.Copy(writer, srcImg)
+	imageUrl, err := uploader.Upload(name, &srcImg)
 	if err != nil {
 		return err
-	}
-	return nil
-}
-
-func convertExtensionToContentType(ext string) string {
-	return "image/" + ext
-}
-
-func (p *Post) Submit(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.PostForm) error {
-	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
-	name := uuid.New().String() + fileExtension
-	var imageUrl string
-
-	if os.Getenv("ENV_TYPE") == "prod" {
-		// GCS処理
-		imageUrl = fmt.Sprintf("https://storage.googleapis.com/%s/%s", os.Getenv("BUCKET_NAME"), name)
-		ctx := context.Background()
-		client, err := storage.NewClient(ctx)
-		if err != nil {
-			return err
-		}
-		writer := client.Bucket(os.Getenv("BUCKET_NAME")).Object(name).NewWriter(ctx)
-		defer writer.Close()
-		writer.ContentType = convertExtensionToContentType(fileExtension)
-		if err = uploadImage(fileHeader, writer); err != nil {
-			return err
-		}
-	} else {
-		imageUrl = fmt.Sprintf("http://localhost:8080/%s", name)
-		fp, err := os.Create(path.Join(os.Getenv("IMG_ROOT"), name))
-		if err != nil {
-			return err
-		}
-		defer fp.Close()
-		if err = uploadImage(fileHeader, fp); err != nil {
-			return err
-		}
 	}
 
 	return p.Insert(db, postForm.Name, imageUrl)
