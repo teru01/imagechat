@@ -41,7 +41,7 @@ func convertExtensionToContentType(ext string) string {
 	return "image/" + ext
 }
 
-func SubmitPost(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.PostForm) error {
+func (p *Post) Submit(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.PostForm) error {
 	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
 	name := uuid.New().String() + fileExtension
 	var imageUrl string
@@ -72,17 +72,17 @@ func SubmitPost(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.Pos
 		}
 	}
 
-	return Insert(db, postForm.Name, imageUrl)
+	return p.Insert(db, postForm.Name, imageUrl)
 }
 
-func Insert(db *gorm.DB, value, imageUrl string) error {
+func (p *Post) Insert(db *gorm.DB, value, imageUrl string) error {
 	return db.Create(&Post{
 		Name:     value,
 		ImageUrl: imageUrl,
 	}).Error
 }
 
-func SelectPosts(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Post, error) {
+func (p *Post) Select(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Post, error) {
 	posts := []Post{}
 	query := db.Offset(offset).Limit(limit)
 	if condition != nil {

@@ -20,8 +20,8 @@ func FetchPosts(c *database.DBContext) error {
 	if err != nil {
 		limit = 20
 	}
-
-	posts, err := model.SelectPosts(c.Db, nil, offset, limit)
+	post := model.Post{}
+	posts, err := post.Select(c.Db, nil, offset, limit)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -29,7 +29,8 @@ func FetchPosts(c *database.DBContext) error {
 }
 
 func FetchPost(c *database.DBContext) error {
-	posts, err := model.SelectPosts(c.Db, &map[string]interface{}{"id": c.Param("id")}, 0, 1)
+	post := model.Post{}
+	posts, err := post.Select(c.Db, &map[string]interface{}{"id": c.Param("id")}, 0, 1)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -50,7 +51,8 @@ func SubmitPost(c *database.DBContext) error {
 	var postForm form.PostForm
 	postForm.Name = c.FormValue("name")
 
-	if err := model.SubmitPost(c.Db, fileHeader, postForm); err != nil {
+	post := model.Post{}
+	if err := post.Submit(c.Db, fileHeader, postForm); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)
