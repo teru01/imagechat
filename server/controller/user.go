@@ -20,19 +20,6 @@ func SignUp(c *database.DBContext) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-func Login(c *database.DBContext) error {
-	var user model.User
-	if err := c.Bind(&user); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-
-	statusCode, err := user.Login(c)
-	if err != nil {
-		return echo.NewHTTPError(statusCode, err.Error())
-	}
-	return c.JSON(statusCode, user)
-}
-
 // func UpdateUser(c *database.DBContext) error {
 // 	var user model.User
 // 	_id, err := strconv.Atoi(c.Param("id"))
