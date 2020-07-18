@@ -9,6 +9,7 @@ import (
 	"github.com/teru01/image/server/controller"
 	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/model"
+	customMiddleware "github.com/teru01/image/server/middleware"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
@@ -37,14 +38,14 @@ func main() {
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/posts", handlerWrapper(controller.FetchPosts, db))
 	e.GET("/posts/:id", handlerWrapper(controller.FetchPost, db))
-	e.POST("/posts", handlerWrapper(controller.SubmitPost, db))
+	e.POST("/posts", handlerWrapper(controller.SubmitPost, db), customMiddleware.SessionAuthentication)
 
 	e.POST("/users", handlerWrapper(controller.SignUp, db))
 	// e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
 	// e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
 
 	e.POST("/session", handlerWrapper(controller.Login, db))
-	e.GET("/session", handlerWrapper(controller.GetInfo, db))
+	e.GET("/session", handlerWrapper(controller.GetInfo, db), customMiddleware.SessionAuthentication)
 	e.DELETE("/session", handlerWrapper(controller.Logout, db))
 
 	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
