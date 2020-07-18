@@ -75,7 +75,14 @@ export default {
         this.result = "ERROR"
       } else {
         this.result = "success!!";
-        this.login_status = `login name: ${response.name}`
+      }
+
+      const sess_result = await api().get(`session`).catch(err => err.response || err);
+      if (sess_result.status !== 200) {
+        this.result = "session err"
+      } else {
+        this.result = "success!!";
+        this.login_status = `login name: ${sess_result.data.Name}`
       }
     },
 
