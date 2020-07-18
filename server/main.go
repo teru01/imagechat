@@ -15,6 +15,8 @@ import (
 	"github.com/labstack/echo-contrib/session"
 )
 
+var Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+
 func main() {
 	db := database.ConnectDB()
 	InitializeDB(db)
@@ -30,7 +32,7 @@ func main() {
 		AllowCredentials: true,
 		AllowHeaders:     []string{"Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"},
 	}))
-	e.Use(session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))))
+	e.Use(session.Middleware(Store))
 
 	e.GET("/", handlerWrapper(controller.IndexGet, db))
 	e.GET("/posts", handlerWrapper(controller.FetchPosts, db))
@@ -43,6 +45,7 @@ func main() {
 
 	e.POST("/session", handlerWrapper(controller.Login, db))
 	e.GET("/session", handlerWrapper(controller.GetInfo, db))
+	e.DELETE("/session", handlerWrapper(controller.Logout, db))
 
 	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
 	e.GET("/comments", handlerWrapper(controller.FetchComments, db))

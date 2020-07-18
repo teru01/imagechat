@@ -2,12 +2,10 @@ package controller
 
 import (
 	"net/http"
-
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/model"
-	// "github.com/gorilla/sessions"
 )
 
 func Login(c *database.DBContext) error {
@@ -20,8 +18,17 @@ func Login(c *database.DBContext) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 	}
-	// return c.JSON(http.StatusOK, User{})
 	return c.NoContent(http.StatusOK)
+}
+
+func Logout(c *database.DBContext) error {
+	sess, err := session.Get("auth", c)
+	if err != nil {
+		return err
+	}
+	sess.Options.MaxAge = -1
+	sess.Save(c.Request(), c.Response())
+	return nil
 }
 
 func GetInfo(c *database.DBContext) error {

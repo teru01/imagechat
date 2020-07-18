@@ -13,6 +13,8 @@
     <button class="btn" @click="login" id="login">login</button>
     <p v-if="login_status">{{login_status}}</p>
 
+    <button class="btn" @click="logout" id="logout">logout</button>
+
     <p v-if="result">{{result}}</p>
     <button v-if="current_page > 0" class="btn" @click="prev" id="pref">prev</button>
     <button v-if="!isLast" class="btn" @click="next" id="next">next</button>
@@ -72,17 +74,27 @@ export default {
         'password': this.password
       }).catch(err => err.response || err);
       if (response.status !== 200) {
-        this.result = "ERROR"
+        this.result = "ERROR";
       } else {
         this.result = "success!!";
       }
 
       const sess_result = await api().get(`session`).catch(err => err.response || err);
       if (sess_result.status !== 200) {
-        this.result = "session err"
+        this.result = "session err";
       } else {
         this.result = "success!!";
-        this.login_status = `login name: ${sess_result.data.Name}`
+        this.login_status = `login name: ${sess_result.data.Name}`;
+      }
+    },
+
+    async logout() {
+      const response = await api().delete('/session').catch(err => err.response || err);
+      if (response.status !== 200) {
+        this.result = "logout ERROR";
+      } else {
+        this.result = "success!!";
+        this.login_status = ''
       }
     },
 

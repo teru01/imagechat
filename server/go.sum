@@ -157,6 +157,7 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/teru01/image v0.0.0-20200131124924-5ce20b7a79c9 h1:xcqXI0KGG5FRFAnxF066bATDCiTEuvtoPYbIIu4ruKc=
+github.com/teru01/image v1.0.16 h1:rVpGGxnngTqm+q4wi5BtbwKq3rOfa2jXjGY8RFQgWLU=
 github.com/teru01/image/server v0.0.0-20200130105631-874e3b24d993 h1:gQS8PDw0qSr2xZXUrju/MsEkkou2DtfRGXC7eOeyNmo=
 github.com/uber-go/atomic v1.4.0/go.mod h1:/Ct5t2lcmbJ4OSe/waGBoaVvVqtO0bmtfVNex1PFV8g=
 github.com/uber/jaeger-client-go v2.19.1-0.20191002155754-0be28c34dabf+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
