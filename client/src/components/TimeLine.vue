@@ -1,19 +1,25 @@
 <template>
   <div class="hello">
+    <div class="auth">
+      <div v-if="!is_login">
+        Email: <input type="text" name="email" v-model="email" />
+        Password: <input type="password" v-model="password" />
+        <button class="btn" @click="login" id="login">login</button>
+      </div>
+      <p v-if="is_login">Hello, {{login_name}}</p>
+      <button v-if="is_login" class="btn" @click="logout" id="logout">logout</button>
+    </div>
+
     <h1>{{ msg }}</h1>
-    <input type="text" name="name" v-model="your_name" />
-    <input class="form__item" type="file" @change="onFileChange" />
-    <output class="form__output" v-if="preview">
-      <img height="200px" :src="preview" alt />
-    </output>
-    <button class="btn" @click="send" id="sendname">send!!</button>
 
-    <input type="text" name="email" v-model="email" />
-    <input type="password" v-model="password" />
-    <button class="btn" @click="login" id="login">login</button>
-    <p v-if="login_status">{{login_status}}</p>
-
-    <button class="btn" @click="logout" id="logout">logout</button>
+    <div v-if="is_login">
+      Title: <input type="text" name="name" v-model="your_name" />
+      <input class="form__item" type="file" @change="onFileChange" />
+      <output class="form__output" v-if="preview">
+        <img height="200px" :src="preview" alt />
+      </output>
+      <button class="btn" @click="send" id="sendname">send!!</button>
+    </div>
 
     <p v-if="result">{{result}}</p>
     <button v-if="current_page > 0" class="btn" @click="prev" id="pref">prev</button>
@@ -48,7 +54,8 @@ export default {
       preview: null,
       photo: null,
       items: [],
-      login_status: "",
+      is_login: false,
+      login_name: "",
     };
   },
 
@@ -68,6 +75,16 @@ export default {
       this.reload();
     },
 
+    async setLoginStatus() {
+      const sess_result = await api().get(`session`).catch(err => err.response || err);
+      if (sess_result.status === 200) {
+        this.is_login = true;
+        this.login_name = sess_result.data.Name
+      } else {
+        this.is_login = false;
+      }
+    },
+
     async login() {
       const response = await api().post(`/session`, {
         'email': this.email,
@@ -78,14 +95,7 @@ export default {
       } else {
         this.result = "success!!";
       }
-
-      const sess_result = await api().get(`session`).catch(err => err.response || err);
-      if (sess_result.status !== 200) {
-        this.result = "session err";
-      } else {
-        this.result = "success!!";
-        this.login_status = `login name: ${sess_result.data.Name}`;
-      }
+      await this.setLoginStatus()
     },
 
     async logout() {
@@ -94,7 +104,7 @@ export default {
         this.result = "logout ERROR";
       } else {
         this.result = "success!!";
-        this.login_status = ''
+        this.is_login = ''
       }
     },
 
@@ -150,6 +160,7 @@ export default {
           this.isLast = true;
         }
       }
+      await this.setLoginStatus()
     },
 
     onFileChange(event) {
