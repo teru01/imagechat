@@ -2,11 +2,9 @@ package model
 
 import (
 	"fmt"
-	"net/http"
 
-	"github.com/gorilla/sessions"
+	"github.com/jinzhu/copier"
 	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/teru01/image/server/database"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -58,29 +56,19 @@ func hashPassword(original string) (string, error) {
 	return string(hashedPasswd), nil
 }
 
-func (user *User) Login(context *database.DBContext) (int, error) {
+func (user *User) ValidateLoginUser(context *database.DBContext) error {
 	var authenticatedUser User
-	hashedPassword, err := hashPassword(user.Password)
-	fmt.Println(hashedPassword)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
 	context.Db.Where("email = ?", user.Email).First(&authenticatedUser)
 	if bcrypt.CompareHashAndPassword([]byte(authenticatedUser.Password), []byte(user.Password)) != nil {
-		return http.StatusUnauthorized, fmt.Errorf("email or password is wrong")
+		return fmt.Errorf("email or password is wrong")
 	}
-	sess, err := session.Get("session", context)
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-	sess.Options = &sessions.Options{
-	  Path:     "/",
-	  MaxAge:   86400 * 7,
-	  HttpOnly: true,
-	}
-	sess.Values["user_id"] = user.Model.ID
-	sess.Save(context.Request(), context.Response())
-	return http.StatusOK, nil
+	copier.Copy(user, &authenticatedUser)
+	return nil
+}
+
+func (user *User) SetSessionValue(sess *Session) {
+	sess.Set("user_id", user.Model.ID)
+	sess.Set("name", user.Name)
 }
 
 // func UpdateUser(db *gorm.DB, user *User, m map[string]interface{}) (*User, error) {
