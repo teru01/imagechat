@@ -23,6 +23,7 @@ func NewSession(user *User, context *database.DBContext) (*Session, error) {
 	}
 	session.Options = &sessions.Options{
 		MaxAge: 86400 * 7,
+		HttpOnly: true,
 	}
 
 	newSession := Session {
