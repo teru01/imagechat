@@ -22,7 +22,7 @@ func Login(c *database.DBContext) error {
 }
 
 func Logout(c *database.DBContext) error {
-	sess, err := session.Get("auth", c)
+	sess, err := session.Get(model.SessionName, c)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func Logout(c *database.DBContext) error {
 }
 
 func GetInfo(c *database.DBContext) error {
-	sess, err := session.Get("auth", c)
+	sess, err := session.Get(model.SessionName, c)
 	if err != nil {
 		return err
 	}

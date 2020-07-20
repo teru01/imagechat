@@ -10,7 +10,7 @@ type Session struct {
 	sess *sessions.Session
 }
 
-const sessionName = "auth"
+const SessionName = "auth"
 
 func NewSession(user *User, context *database.DBContext) (*Session, error) {
 	if err := user.ValidateLoginUser(context); err != nil {
