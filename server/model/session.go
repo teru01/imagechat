@@ -17,7 +17,7 @@ func NewSession(user *User, context *database.DBContext) (*Session, error) {
 		return nil, err
 	}
 
-	session, err := session.Get(sessionName, context)
+	session, err := session.Get(SessionName, context)
 	if err != nil {
 		return nil, err
 	}
