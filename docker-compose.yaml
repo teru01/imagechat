@@ -8,7 +8,7 @@ services:
       - db
     volumes:
       - ./server:/go/src/app
-        - ./public:/go/src/app/public
+      - ./public:/go/src/app/public
     env_file:
       - ./server/.env
     restart: always
