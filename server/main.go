@@ -8,8 +8,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/teru01/image/server/controller"
 	"github.com/teru01/image/server/database"
-	"github.com/teru01/image/server/model"
 	customMiddleware "github.com/teru01/image/server/middleware"
+	"github.com/teru01/image/server/model"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
@@ -19,7 +19,7 @@ import (
 var Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 func main() {
-	db := database.ConnectDB()
+	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"))
 	InitializeDB(db)
 	defer db.Close()
 	e := echo.New()
