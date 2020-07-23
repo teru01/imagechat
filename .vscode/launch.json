@@ -11,8 +11,23 @@
 			"mode": "auto",
 			"program": "/Users/mirai/works/go/src/github.com/teru01/image/server/main.go",
 			"env": {
-				"MYSQL_ROOT_PASSWORD": "secret",
-				"MYSQL_DATABASE": "photoapp",
+				"MYSQL_USER": "sheep",
+				"MYSQL_PASSWORD": "secret",
+				"MYSQL_DATABASE": "imagechat_test",
+				"IMG_ROOT": "/go/src/app/public"
+			},
+			"args": []
+		},
+		{
+			"name": "test",
+			"type": "go",
+			"request": "launch",
+			"mode": "test",
+			"program": "/Users/mirai/works/go/src/github.com/teru01/image/server/controller/post_test.go",
+			"env": {
+				"MYSQL_USER": "sheep",
+				"MYSQL_PASSWORD": "secret",
+				"MYSQL_DATABASE": "imagechat_test",
 				"IMG_ROOT": "/go/src/app/public"
 			},
 			"args": []
