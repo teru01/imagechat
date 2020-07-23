@@ -41,9 +41,13 @@ func TestFetchPost(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req := httptest.NewRequest(http.MethodGet, "/posts/2", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
 	cx := database.DBContext{e.NewContext(req, rec), db}
+	cx.SetPath("/posts/:id")
+	cx.SetParamNames("id")
+	cx.SetParamValues("2")
+
 	err := FetchPost(&cx) //routeで/posts/:idのパースが行われないから
 	if err != nil {
 		t.Error(err)
