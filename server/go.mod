@@ -14,7 +14,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo-contrib v0.9.0
-	github.com/labstack/echo/v4 v4.1.14
+	github.com/labstack/echo/v4 v4.1.16
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
-	golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d
+	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
 )
