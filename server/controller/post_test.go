@@ -1,46 +1,33 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
-	// "github.com/DATA-DOG/go-sqlmock"
-	_ "github.com/proullon/ramsql/driver"
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	_ "github.com/proullon/ramsql/driver"
 	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/model"
-
 )
 
-func getDBMock() (*gorm.DB, error) {
-	gdb, err := gorm.Open("ramsql", "TestDB")
-	if err != nil {
-		return nil, err
-	}
-	return gdb, nil
-}
+var db *gorm.DB
 
 func TestFetchPost(t *testing.T) {
+	setUp()
+	defer tearDown()
 	e := echo.New()
-	db, err := getDBMock()
-	if err != nil {
-		t.Fatalf("db open err: %v", err)
-	}
-	defer db.Close()
-
-	// mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `posts` WHERE `posts`.`deleted_at` IS NULL LIMIT 2 OFFSET 0")).
-		// WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "aaaaa").AddRow(2, "bbbbb"))
-
-	InitializeDB(db)
 
 	target := model.Post{
 		Name:     "bar",
 		ImageUrl: "http://hoge.com/3434",
 	}
 	targetJson := `{"name":"bar", "image_url":"http://hoge.com/3434"}`
-	if err := createSeedData([]model.Post {
+	if err := createSeedData([]model.Post{
 		model.Post{
 			Name:     "hogehoge",
 			ImageUrl: "http://hoge.com/1212",
@@ -57,7 +44,7 @@ func TestFetchPost(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/posts/2", nil)
 	rec := httptest.NewRecorder()
 	cx := database.DBContext{e.NewContext(req, rec), db}
-	err = FetchPosts(&cx)
+	err := FetchPost(&cx) //routeで/posts/:idのパースが行われないから
 	if err != nil {
 		t.Error(err)
 	}
@@ -71,7 +58,7 @@ func TestFetchPost(t *testing.T) {
 }
 
 func createSeedData(items []model.Post, db *gorm.DB) error {
-	for i := range items {
+	for _, i := range items {
 		if err := db.Create(&i).Error; err != nil {
 			return err
 		}
@@ -80,15 +67,28 @@ func createSeedData(items []model.Post, db *gorm.DB) error {
 }
 
 func InitializeDB(db *gorm.DB) {
-	// db.Exec(`CREATE TABLE posts (
-	// 	id serial primary key,
-	// 	created_at timestamp,
-	// 	updated_at timestamp,
-	// 	deleted_at timestamp,
-	// 	name varchar(255),
-	// 	image_url varchar(255))`)
-		// db.Exec(`CREATE TABLE posts (id BIGSERIAL PRIMARY KEY, street TEXT, street_number INT);`)
 	db.AutoMigrate(&model.Post{})
 	db.AutoMigrate(&model.User{})
 	db.AutoMigrate(&model.Comment{})
+}
+
+func ResetDB(db *gorm.DB) {
+	db.DropTable(&model.Post{})
+	db.DropTable(&model.User{})
+	db.DropTable(&model.Comment{})
+}
+
+func setUp() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal(err)
+	}
+	db = database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), "localhost", os.Getenv("MYSQL_TEST_DATABASE"))
+	db.LogMode(true)
+	InitializeDB(db)
+}
+
+func tearDown() {
+	ResetDB(db)
+	db.Close()
 }
