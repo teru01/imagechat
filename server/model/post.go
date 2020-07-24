@@ -43,6 +43,10 @@ func (p *Post) Insert(db *gorm.DB, value, imageUrl string) error {
 	}).Error
 }
 
+func (p *Post) Create(db *gorm.DB) error {
+	return db.Create(p).Error
+}
+
 func (p *Post) Select(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Post, error) {
 	posts := []Post{}
 	query := db.Offset(offset).Limit(limit)

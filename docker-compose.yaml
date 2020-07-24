@@ -28,6 +28,7 @@ services:
       - 3306:3306
     volumes:
       - db-store:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
       - ./logs:/var/log/mysql
     env_file:
       - mysql/.env

@@ -22,11 +22,11 @@ func NewSession(user *User, context *database.DBContext) (*Session, error) {
 		return nil, err
 	}
 	session.Options = &sessions.Options{
-		MaxAge: 86400 * 7,
+		MaxAge:   86400 * 7,
 		HttpOnly: true,
 	}
 
-	newSession := Session {
+	newSession := Session{
 		sess: session,
 	}
 
