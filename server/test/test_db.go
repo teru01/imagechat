@@ -27,8 +27,7 @@ func SetUpDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), "localhost", os.Getenv("MYSQL_TEST_DATABASE"))
-	db.LogMode(true)
+	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), "localhost", os.Getenv("MYSQL_TEST_DATABASE"), "0")
 	InitializeDB(db)
 	return db
 }
