@@ -15,9 +15,10 @@ import (
 
 type Post struct {
 	gorm.Model
-	UserID   uint
+	UserID   uint   `json:"user_id" gorm:"not null"`
 	Name     string `json:"name" gorm:"type:varchar(255)"`
 	ImageUrl string `json:"image_url" gorm:"type:varchar(128)"`
+	UserName string `json:"user_name" gorm:"-"`
 }
 
 func (p *Post) Submit(c *database.DBContext, fileHeader *multipart.FileHeader, postForm form.PostForm, uploader Uploader) error {
@@ -50,6 +51,16 @@ func (p *Post) Select(db *gorm.DB, condition *map[string]interface{}, offset, li
 	if condition != nil {
 		query = query.Where(*condition)
 	}
-	result := query.Find(&posts)
-	return posts, result.Error
+	records, err := query.Table("posts").Select("posts.id, posts.name, posts.image_url, users.name").Joins("left join users on posts.user_id = users.id").Rows()
+	if err != nil {
+		return posts, err
+	}
+	for records.Next() {
+		var p Post
+		if err = records.Scan(&p.Model.ID, &p.Name, &p.ImageUrl, &p.UserName); err != nil {
+			return posts, err
+		}
+		posts = append(posts, p)
+	}
+	return posts, nil
 }
