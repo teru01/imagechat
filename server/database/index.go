@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -15,13 +14,12 @@ type DBContext struct {
 	Db *gorm.DB
 }
 
-func ConnectDB() *gorm.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s", "root", os.Getenv("MYSQL_ROOT_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"))
+func ConnectDB(user, password, host, dbname, logMode string) *gorm.DB {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, host, dbname)
 	db, err := gorm.Open("mysql", dsn+"?parseTime=true")
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.LogMode(logMode == "1")
 	return db
 }
-
-
