@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -55,8 +56,12 @@ func TestFetchPost(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Errorf("unexpected status code. Expected %v got %v", http.StatusOK, rec.Code)
 	}
-	response := rec.Body.String()
-	if response != targetJson {
+	var response model.Post
+	if err = json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatal(err)
+	}
+
+	if response.ImageUrl != target.ImageUrl || response.Name != target.Name {
 		t.Errorf("unexpected response. Expected %v got %v", targetJson, response)
 	}
 }
