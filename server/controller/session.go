@@ -33,14 +33,10 @@ func Logout(c *database.DBContext) error {
 }
 
 func GetInfo(c *database.DBContext) error {
-	sess, err := session.Get(model.SessionName, c)
-	if err != nil {
-		return err
-	}
 	ret := struct {
 		Name string
 	}{
-		Name: sess.Values["name"].(string),
+		Name: model.GetAuthSessionData(c, "name").(string),
 	}
 	return c.JSON(http.StatusOK, ret)
 }

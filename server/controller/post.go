@@ -52,7 +52,7 @@ func SubmitPost(c *database.DBContext) error {
 	postForm.Name = c.FormValue("name")
 
 	post := model.Post{}
-	if err := post.Submit(c.Db, fileHeader, postForm, getUploader()); err != nil {
+	if err := post.Submit(c, fileHeader, postForm, getUploader()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusCreated)

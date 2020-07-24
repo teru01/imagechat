@@ -28,6 +28,7 @@
       <tr v-for="item in items" :key="item.ID">
         <td>{{item.ID}}</td>
         <td>{{item.name}}</td>
+        <td>{{item.user_name}}</td>
         <td><img height="200px" :src="item.image_url"></td>
       </tr>
     </table>

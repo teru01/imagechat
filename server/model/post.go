@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/form"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -14,11 +15,13 @@ import (
 
 type Post struct {
 	gorm.Model
+	UserID   uint   `json:"user_id" gorm:"not null"`
 	Name     string `json:"name" gorm:"type:varchar(255)"`
 	ImageUrl string `json:"image_url" gorm:"type:varchar(128)"`
+	UserName string `json:"user_name" gorm:"-"`
 }
 
-func (p *Post) Submit(db *gorm.DB, fileHeader *multipart.FileHeader, postForm form.PostForm, uploader Uploader) error {
+func (p *Post) Submit(c *database.DBContext, fileHeader *multipart.FileHeader, postForm form.PostForm, uploader Uploader) error {
 	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
 	name := uuid.New().String() + fileExtension
 
@@ -32,15 +35,10 @@ func (p *Post) Submit(db *gorm.DB, fileHeader *multipart.FileHeader, postForm fo
 	if err != nil {
 		return err
 	}
-
-	return p.Insert(db, postForm.Name, imageUrl)
-}
-
-func (p *Post) Insert(db *gorm.DB, value, imageUrl string) error {
-	return db.Create(&Post{
-		Name:     value,
-		ImageUrl: imageUrl,
-	}).Error
+	p.ImageUrl = imageUrl
+	p.Name = postForm.Name
+	p.UserID = GetAuthSessionData(c, "user_id").(uint)
+	return p.Create(c.Db)
 }
 
 func (p *Post) Create(db *gorm.DB) error {
@@ -53,6 +51,16 @@ func (p *Post) Select(db *gorm.DB, condition *map[string]interface{}, offset, li
 	if condition != nil {
 		query = query.Where(*condition)
 	}
-	result := query.Find(&posts)
-	return posts, result.Error
+	records, err := query.Table("posts").Select("posts.id, posts.name, posts.image_url, users.name").Joins("left join users on posts.user_id = users.id").Rows()
+	if err != nil {
+		return posts, err
+	}
+	for records.Next() {
+		var p Post
+		if err = records.Scan(&p.Model.ID, &p.Name, &p.ImageUrl, &p.UserName); err != nil {
+			return posts, err
+		}
+		posts = append(posts, p)
+	}
+	return posts, nil
 }

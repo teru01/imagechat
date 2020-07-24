@@ -38,3 +38,11 @@ func NewSession(user *User, context *database.DBContext) (*Session, error) {
 func (s *Session) Set(key string, val interface{}) {
 	s.sess.Values[key] = val
 }
+
+func GetAuthSessionData(c *database.DBContext, key string) interface{} {
+	sess, err := session.Get(SessionName, c)
+	if err != nil {
+		return err
+	}
+	return sess.Values[key]
+}

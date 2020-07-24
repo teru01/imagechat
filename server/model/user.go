@@ -15,6 +15,7 @@ type User struct {
 	Email    string `json:"email" gorm:"type:varchar(255)"`
 	Password string `json:"password" gorm:"type:varchar(255)"`
 	Comments []Comment
+	Posts    []Post
 }
 
 func userAvailable(db *gorm.DB, name, email string) (bool, string) {
@@ -42,10 +43,11 @@ func (user *User) SignUp(db *gorm.DB) error {
 	}
 	user.Password = hashed
 
-	if err := db.Create(user).Error; err != nil {
-		return err
-	}
-	return nil
+	return user.Create(db)
+}
+
+func (user *User) Create(db *gorm.DB) error {
+	return db.Create(user).Error
 }
 
 func hashPassword(original string) (string, error) {

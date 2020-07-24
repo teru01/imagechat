@@ -46,7 +46,7 @@ func main() {
 
 	e.POST("/session", handlerWrapper(controller.Login, db))
 	e.GET("/session", handlerWrapper(controller.GetInfo, db), customMiddleware.SessionAuthentication)
-	e.DELETE("/session", handlerWrapper(controller.Logout, db))
+	e.DELETE("/session", handlerWrapper(controller.Logout, db), customMiddleware.SessionAuthentication)
 
 	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
 	e.GET("/comments", handlerWrapper(controller.FetchComments, db))
