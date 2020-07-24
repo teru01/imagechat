@@ -19,7 +19,7 @@ import (
 var Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 func main() {
-	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"))
+	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"), os.Getenv("QUERY_LOG_MODE"))
 	InitializeDB(db)
 	defer db.Close()
 	e := echo.New()

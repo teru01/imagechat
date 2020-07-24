@@ -14,12 +14,12 @@ type DBContext struct {
 	Db *gorm.DB
 }
 
-func ConnectDB(user, password, host, dbname string) *gorm.DB {
+func ConnectDB(user, password, host, dbname, logMode string) *gorm.DB {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, host, dbname)
 	db, err := gorm.Open("mysql", dsn+"?parseTime=true")
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.LogMode(true)
+	db.LogMode(logMode == "1")
 	return db
 }
