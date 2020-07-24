@@ -70,7 +70,6 @@ func TestCanGetSpecificPostsByQueryParameter(t *testing.T) {
 			ImageUrl: fmt.Sprintf("http://example.com/%v.png", i),
 		})
 	}
-
 	targetPosts := []model.Creatable{
 		&model.Post{
 			Name: "qwrty",
@@ -82,14 +81,12 @@ func TestCanGetSpecificPostsByQueryParameter(t *testing.T) {
 		},
 	}
 	posts = append(posts, targetPosts...)
-
 	for i:=0; i<2; i++ {
 		posts = append(posts, &model.Post{
 			Name: fmt.Sprintf("name_%v", i),
 			ImageUrl: fmt.Sprintf("http://example.com/%v.png", i),
 		})
 	}
-
 	if err := test.CreateSeedData(posts, db); err != nil {
 		t.Fatal(err)
 	}
