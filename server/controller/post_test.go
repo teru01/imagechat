@@ -64,26 +64,26 @@ func TestCanGetSpecificPostsByQueryParameter(t *testing.T) {
 	e := echo.New()
 	var posts []model.Creatable
 
-	for i:=0; i<2; i++ {
+	for i := 0; i < 2; i++ {
 		posts = append(posts, &model.Post{
-			Name: fmt.Sprintf("name_%v", i),
+			Name:     fmt.Sprintf("name_%v", i),
 			ImageUrl: fmt.Sprintf("http://example.com/%v.png", i),
 		})
 	}
 	targetPosts := []model.Creatable{
 		&model.Post{
-			Name: "qwrty",
+			Name:     "qwrty",
 			ImageUrl: "http://example.com/a.png",
 		},
 		&model.Post{
-			Name: "zxcvb",
+			Name:     "zxcvb",
 			ImageUrl: "http://example.com/b.png",
 		},
 	}
 	posts = append(posts, targetPosts...)
-	for i:=0; i<2; i++ {
+	for i := 0; i < 2; i++ {
 		posts = append(posts, &model.Post{
-			Name: fmt.Sprintf("name_%v", i),
+			Name:     fmt.Sprintf("name_%v", i),
 			ImageUrl: fmt.Sprintf("http://example.com/%v.png", i),
 		})
 	}
@@ -94,7 +94,7 @@ func TestCanGetSpecificPostsByQueryParameter(t *testing.T) {
 	q := make(url.Values)
 	q.Set("offset", "2")
 	q.Set("limit", "2")
-	req := httptest.NewRequest(http.MethodGet, "/posts?" + q.Encode(), nil)
+	req := httptest.NewRequest(http.MethodGet, "/posts?"+q.Encode(), nil)
 	rec := httptest.NewRecorder()
 	cx := database.DBContext{e.NewContext(req, rec), db}
 
