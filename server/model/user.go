@@ -15,6 +15,7 @@ type User struct {
 	Email    string `json:"email" gorm:"type:varchar(255)"`
 	Password string `json:"password" gorm:"type:varchar(255)"`
 	Comments []Comment
+	Posts    []Post
 }
 
 func userAvailable(db *gorm.DB, name, email string) (bool, string) {
