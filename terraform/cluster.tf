@@ -88,3 +88,26 @@ resource "kubernetes_config_map" "k8s-map" {
   }
 }
 
+resource "kubernetes_service_account" "ksa" {
+  metadata {
+    name = var.k8s_service_account
+    annotations = {
+      "iam.gke.io/gcp-service-account" = "${var.k8s_service_account}@${var.project_id}.iam.gserviceaccount.com"
+    }
+  }
+  secret {
+    name = kubernetes_secret.db-info.metadata.0.name
+  }
+}
+
+resource "kubernetes_secret" "db-info" {
+  metadata {
+    name = "db-info"
+  }
+
+  data = {
+    db_user = var.db_username
+    db_password = var.db_password
+    db_name = var.db_name
+  }
+}

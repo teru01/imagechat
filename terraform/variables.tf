@@ -4,6 +4,11 @@ variable "project_id" {}
 variable "db_username" {}
 variable "db_password" {}
 
+
+variable db_name {
+  default = "imagechat-db"
+}
+
 variable "zone" {
   default = "asia-northeast1-a"
 }
@@ -19,6 +24,10 @@ variable "k8s_svc_accounts" {
 
 variable "gke_service_account" {
   default = "gketosql"
+}
+
+variable "k8s_service_account" {
+  default = "myksa"
 }
 
 variable "dns_name" {}

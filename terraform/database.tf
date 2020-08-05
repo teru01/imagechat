@@ -19,7 +19,7 @@ resource "google_sql_database_instance" "master" {
 
 resource "google_sql_database" "database" {
   project  = var.project_id
-  name     = "imagechat-db"
+  name     = var.db_name
   instance = google_sql_database_instance.master.name
   charset  = "utf8mb4"
 }
