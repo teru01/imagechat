@@ -5,7 +5,8 @@ set -eux
 gcloud config set project $PROJECT_ID
 gcloud services enable container.googleapis.com containerregistry.googleapis.com \
     servicenetworking.googleapis.com cloudresourcemanager.googleapis.com \
-    sqladmin.googleapis.com iamcredentials.googleapis.com cloudbuild.googleapis.com
+    sqladmin.googleapis.com iamcredentials.googleapis.com cloudbuild.googleapis.com \
+    storage.googleapis.com
 
 gcloud iam service-accounts create terraform --display-name="terraform-account" --project=$PROJECT_ID
 
