@@ -28,7 +28,7 @@ func main() {
 		Output: os.Stdout,
 	}))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:8080", "https://localhost:48080", "http://localhost", "https://localhost"},
+		AllowOrigins:     []string{"http://localhost:8080", "https://localhost:48080", "http://localhost", "https://localhost", "https://imagechat.ga"},
 		AllowMethods:     []string{"GET, DELETE, OPTIONS, POST, PUT"},
 		AllowCredentials: true,
 		AllowHeaders:     []string{"Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"},
