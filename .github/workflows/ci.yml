@@ -32,9 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build backend
-        run: docker build -t gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-backend:${GITHUB_SHA} -f Dockerfile.prod .
+        run: docker build -t gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-backend:${GITHUB_SHA} -f ./server/Dockerfile.prod ./server
       - name: build frontend
-        run: docker build -t gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-frontend:${GITHUB_SHA} -f Dockerfile.prod .
+        run: docker build -t gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-frontend:${GITHUB_SHA} -f ./client/Dockerfile.prod ./client
 
       - name: GCP Authenticate
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
