@@ -24,7 +24,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: src
+        working-directory: server
 
   build-push:
     needs: test
