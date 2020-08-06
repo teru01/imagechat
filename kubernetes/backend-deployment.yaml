@@ -42,12 +42,12 @@ spec:
           resources:
             limits:
               memory: "600Mi"
-              cpu: "180m"
+              cpu: "200m"
             requests:
               memory: "250Mi"
               cpu: "100m"
           ports:
-            - containerPort: 8080
+            - containerPort: 8888
         - name: cloud-sql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.17
           env:

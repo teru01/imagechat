@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: global-ingress-ip
+spec:
+  tls:
+    - secretName: tls-cert
+  rules:
+    - http:
+        paths:
+          - path: /api/*
+            backend:
+              serviceName: backend-service
+              servicePort: 3000
+          - path: /*
+            backend:
+              serviceName: frontend-service
+              servicePort: 3001
