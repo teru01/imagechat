@@ -4,6 +4,10 @@ variable "project_id" {}
 variable "db_username" {}
 variable "db_password" {}
 
+variable "dns_name" {}
+
+variable "terraform_account_email" {}
+
 variable "bucket_name" {
   default = "imagechet-storage-1122"
 }
@@ -37,4 +41,3 @@ variable "k8s_service_account" {
   default = "myksa"
 }
 
-variable "dns_name" {}

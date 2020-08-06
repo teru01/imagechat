@@ -24,9 +24,10 @@ resource "google_project_iam_binding" "cloudsql-binding" {
 
 resource "google_project_iam_binding" "storage-binding" {
   project = var.project_id
-  role    = "roles/storage.admin"
+  role    = "roles/storage.objectAdmin"
   members = [
     "serviceAccount:${google_service_account.service_account.email}",
+    "serviceAccount:${var.terraform_account_email}"
   ]
 }
 
