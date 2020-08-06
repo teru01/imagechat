@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: myksa
+      containers:
+        - name: imagechat-backend
+          image: gcr.io/gcp-poc-282413/gcp-poc:40a20b4bac470173d19eb3d248feb5c5a5e656e4
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-info
+                  key: db_user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-info
+                  key: db_password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: db-info
+                  key: db_name
+            - name: ENV_TYPE
+              value: prod
+            - name: BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: tf-output
+                  key: bucket-name
+          resources:
+            limits:
+              memory: "600Mi"
+              cpu: "180m"
+            requests:
+              memory: "250Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 8080
+        - name: cloud-sql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.17
+          env:
+            - name: CONNECTION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: tf-output
+                  key: cloudsql-connection-name
+          command:
+            - "/cloud_sql_proxy"
+            - "-ip_address_types=PRIVATE"
+            - "-instances=$(CONNECTION_NAME)=tcp:3306"
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "70m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+          securityContext:
+            runAsNonRoot: true
