@@ -21,7 +21,7 @@ data:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gcp-poc
+  name: imagechat
   namespace: argocd
 spec:
   project: default
