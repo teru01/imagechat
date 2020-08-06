@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: imagechat-frontend
-        image: gcr.io/imagechat-285509/imagechat-frontend:40a20b4bac470173d19eb3d248feb5c5a5e656e4
+        image: gcr.io/imagechat-285509/imagechat-frontend:295b8b9d53bcef1df3acf4ff693d193a4861947e
         resources:
           limits:
             memory: "600Mi"
