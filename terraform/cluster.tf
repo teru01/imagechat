@@ -93,7 +93,7 @@ resource "kubernetes_service_account" "ksa" {
   metadata {
     name = var.k8s_service_account
     annotations = {
-      "iam.gke.io/gcp-service-account" = "${var.k8s_service_account}@${var.project_id}.iam.gserviceaccount.com"
+      "iam.gke.io/gcp-service-account" = "${var.gke_service_account}@${var.project_id}.iam.gserviceaccount.com"
     }
   }
   secret {
