@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: imagechat-frontend
+        image: gcr.io/imagechat-285509/imagechat-frontend:40a20b4bac470173d19eb3d248feb5c5a5e656e4
+        resources:
+          limits:
+            memory: "600Mi"
+            cpu: "100m"
+          requests:
+            memory: "100Mi"
+            cpu: "50m"
+        ports:
+        - containerPort: 80

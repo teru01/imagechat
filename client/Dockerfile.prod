@@ -2,7 +2,6 @@ FROM node:lts-alpine as builder
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install
-# 全てコピーしないとエラーになった
 COPY . .
 RUN yarn build
 
