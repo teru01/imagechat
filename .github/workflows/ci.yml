@@ -1,0 +1,63 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - server/**
+      - .github/workflows/**
+      - client/**
+env:
+  CONTAINER_BASENAME: imagechat
+
+jobs:
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up Go 1.x
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: ^1.13
+  #     - name: test
+  #       run: go test -v
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #       working-directory: src
+
+  build-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build backend
+        run: docker build -t gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-backend:${GITHUB_SHA} -f Dockerfile.prod .
+      - name: build frontend
+        run: docker build -t gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-frontend:${GITHUB_SHA} -f Dockerfile.prod .
+
+      - name: GCP Authenticate
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "290.0.1"
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+      - name: Configure docker to use the gcloud cli
+        run: gcloud auth configure-docker
+
+      - name: push backend
+        run: docker push gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-backend:${GITHUB_SHA}
+      - name: push frontend
+        run: docker push gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-frontend:${GITHUB_SHA}
+
+  pull-request:
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: update k8s image tag
+        run: sed -i "s|gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-.*:.*|gcr.io/${{ secrets.PROJECT_ID }}/${CONTAINER_BASENAME}-.*:$GITHUB_SHA|g" ./kubernetes/*.yaml
+      - name: create pull request
+        uses: peter-evans/create-pull-request@v3
+
+
