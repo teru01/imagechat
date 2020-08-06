@@ -112,3 +112,16 @@ resource "kubernetes_secret" "db-info" {
     db_name = var.db_name
   }
 }
+
+resource "kubernetes_secret" "tls" {
+  metadata {
+    name = "tls-cert"
+  }
+
+  type = "tls"
+
+  data = {
+    "tls.crt" = file(var.cert_path)
+    "tls.key" = file(var.key_path)
+  }
+}

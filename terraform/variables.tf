@@ -3,8 +3,9 @@ variable "project_id" {}
 
 variable "db_username" {}
 variable "db_password" {}
-
 variable "dns_name" {}
+variable "cert_path" {}
+variable "key_path" {}
 
 variable "terraform_account_email" {}
 
@@ -40,4 +41,5 @@ variable "gke_service_account" {
 variable "k8s_service_account" {
   default = "myksa"
 }
+
 
