@@ -84,7 +84,8 @@ resource "kubernetes_config_map" "k8s-map" {
   }
 
   data = {
-    cloudsql-connection-name = google_sql_database_instance.master.connection_name
+    cloudsql-connection-name = google_sql_database_instance.master.connection_name,
+    bucket-name = google_storage_bucket.bucket.name
   }
 }
 

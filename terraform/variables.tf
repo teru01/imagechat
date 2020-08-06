@@ -4,6 +4,13 @@ variable "project_id" {}
 variable "db_username" {}
 variable "db_password" {}
 
+variable "bucket_name" {
+  default = "imagechet-storage-1122"
+}
+
+variable "my_domain" {
+  default = "imagechat.ga"
+}
 
 variable db_name {
   default = "imagechat-db"
