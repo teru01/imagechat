@@ -5,13 +5,11 @@ provider "google-beta" {
 }
 
 resource "google_container_cluster" "primary" {
-  project = var.project_id
+  project  = var.project_id
   name     = "imagechat-cluster"
   location = var.region
   node_locations = [
-      "asia-northeast1-a",
-      "asia-northeast1-b",
-      "asia-northeast1-c"
+    "asia-northeast1-a",
   ]
   # ノードプールとクラスタを分けて作成したいが，ノードプールのないクラスタは作成できない
   # そのため小さなノードプールを作成してすぐに削除する．
@@ -23,7 +21,7 @@ resource "google_container_cluster" "primary" {
     cluster_ipv4_cidr_block  = ""
     services_ipv4_cidr_block = ""
   }
-  network = google_compute_network.private_network.self_link
+  network    = google_compute_network.private_network.self_link
   subnetwork = google_compute_subnetwork.imagechat-subnet.self_link
 
   master_auth {
@@ -49,7 +47,7 @@ resource "google_container_node_pool" "primary_nodes" {
   name       = "imagechat-node-pool"
   location   = var.region
   cluster    = google_container_cluster.primary.name
-  node_count = 2
+  node_count = 1
 
   node_config {
     machine_type = "n1-standard-1"
@@ -73,7 +71,7 @@ resource "google_container_node_pool" "primary_nodes" {
 
 resource "google_compute_global_address" "default" {
   project = var.project_id
-  name = "global-ingress-ip"
+  name    = "global-ingress-ip"
 }
 
 provider "kubernetes" {}
@@ -85,7 +83,7 @@ resource "kubernetes_config_map" "k8s-map" {
 
   data = {
     cloudsql-connection-name = google_sql_database_instance.master.connection_name,
-    bucket-name = google_storage_bucket.bucket.name
+    bucket-name              = google_storage_bucket.bucket.name
   }
 }
 
@@ -107,9 +105,9 @@ resource "kubernetes_secret" "db-info" {
   }
 
   data = {
-    db_user = var.db_username
+    db_user     = var.db_username
     db_password = var.db_password
-    db_name = var.db_name
+    db_name     = var.db_name
   }
 }
 
