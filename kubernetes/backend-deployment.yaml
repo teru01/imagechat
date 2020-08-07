@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -41,8 +41,8 @@ spec:
                   key: bucket-name
           resources:
             limits:
-              memory: "600Mi"
-              cpu: "200m"
+              memory: "1000Mi"
+              cpu: "300m"
             requests:
               memory: "250Mi"
               cpu: "100m"
