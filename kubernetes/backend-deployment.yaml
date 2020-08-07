@@ -15,7 +15,7 @@ spec:
       serviceAccountName: myksa
       containers:
         - name: imagechat-backend
-          image: gcr.io/imagechat-285509/imagechat-backend:8c370119b94da783872872a9d51fae1e85a8d69e
+          image: gcr.io/imagechat-285509/imagechat-backend:bf33ea81fb08eb7581e09372dd50b77e55987a84
           env:
             - name: MYSQL_USER
               valueFrom:
