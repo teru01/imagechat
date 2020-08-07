@@ -10,7 +10,7 @@ variable "key_path" {}
 variable "terraform_account_email" {}
 
 variable "bucket_name" {
-  default = "imagechet-storage-1122"
+  default = "imagechet-storage-3344"
 }
 
 variable "my_domain" {
@@ -41,5 +41,3 @@ variable "gke_service_account" {
 variable "k8s_service_account" {
   default = "myksa"
 }
-
-

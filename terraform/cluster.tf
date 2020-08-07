@@ -7,10 +7,7 @@ provider "google-beta" {
 resource "google_container_cluster" "primary" {
   project  = var.project_id
   name     = "imagechat-cluster"
-  location = var.region
-  node_locations = [
-    "asia-northeast1-a",
-  ]
+  location = var.zone
   # ノードプールとクラスタを分けて作成したいが，ノードプールのないクラスタは作成できない
   # そのため小さなノードプールを作成してすぐに削除する．
   remove_default_node_pool = true
@@ -45,12 +42,12 @@ locals {
 resource "google_container_node_pool" "primary_nodes" {
   provider   = google-beta
   name       = "imagechat-node-pool"
-  location   = var.region
+  location   = var.zone
   cluster    = google_container_cluster.primary.name
   node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1"
+    machine_type = "n1-standard-2"
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -77,6 +74,7 @@ resource "google_compute_global_address" "default" {
 provider "kubernetes" {}
 
 resource "kubernetes_config_map" "k8s-map" {
+  depends_on = [google_container_node_pool.primary_nodes]
   metadata {
     name = "tf-output"
   }
@@ -88,18 +86,17 @@ resource "kubernetes_config_map" "k8s-map" {
 }
 
 resource "kubernetes_service_account" "ksa" {
+  depends_on = [google_container_node_pool.primary_nodes]
   metadata {
     name = var.k8s_service_account
     annotations = {
       "iam.gke.io/gcp-service-account" = "${var.gke_service_account}@${var.project_id}.iam.gserviceaccount.com"
     }
   }
-  secret {
-    name = kubernetes_secret.db-info.metadata.0.name
-  }
 }
 
 resource "kubernetes_secret" "db-info" {
+  depends_on = [google_container_node_pool.primary_nodes]
   metadata {
     name = "db-info"
   }
@@ -112,6 +109,7 @@ resource "kubernetes_secret" "db-info" {
 }
 
 resource "kubernetes_secret" "tls" {
+  depends_on = [google_container_node_pool.primary_nodes]
   metadata {
     name = "tls-cert"
   }
