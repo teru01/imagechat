@@ -24,7 +24,8 @@ func main() {
 	defer db.Close()
 	e := echo.New()
 
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+    api := e.Group("/api")
+	api.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Output: os.Stdout,
 	}))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -33,24 +34,23 @@ func main() {
 		AllowCredentials: true,
 		AllowHeaders:     []string{"Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"},
 	}))
-	e.Use(session.Middleware(Store))
+	api.Use(session.Middleware(Store))
 
-	e.GET("/", handlerWrapper(controller.IndexGet, db))
-	e.GET("/posts", handlerWrapper(controller.FetchPosts, db))
-	e.GET("/posts/:id", handlerWrapper(controller.FetchPost, db))
-	e.POST("/posts", handlerWrapper(controller.SubmitPost, db), customMiddleware.SessionAuthentication)
+	api.GET("/", handlerWrapper(controller.IndexGet, db))
+	api.GET("/posts", handlerWrapper(controller.FetchPosts, db))
+	api.GET("/posts/:id", handlerWrapper(controller.FetchPost, db))
+	api.POST("/posts", handlerWrapper(controller.SubmitPost, db), customMiddleware.SessionAuthentication)
 
-	e.POST("/users", handlerWrapper(controller.SignUp, db))
-	// e.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
-	// e.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
+	api.POST("/users", handlerWrapper(controller.SignUp, db))
+	// api.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
+	// api.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
 
-	e.POST("/session", handlerWrapper(controller.Login, db))
-	e.GET("/session", handlerWrapper(controller.GetInfo, db), customMiddleware.SessionAuthentication)
-	e.DELETE("/session", handlerWrapper(controller.Logout, db), customMiddleware.SessionAuthentication)
+	api.POST("/session", handlerWrapper(controller.Login, db))
+	api.GET("/session", handlerWrapper(controller.GetInfo, db), customMiddleware.SessionAuthentication)
+	api.DELETE("/session", handlerWrapper(controller.Logout, db), customMiddleware.SessionAuthentication)
 
-	e.POST("/comments", handlerWrapper(controller.CreateComment, db))
-	e.GET("/comments", handlerWrapper(controller.FetchComments, db))
-	e.Static("/static", "static")
+	api.POST("/comments", handlerWrapper(controller.CreateComment, db))
+	api.GET("/comments", handlerWrapper(controller.FetchComments, db))
 	e.Logger.Fatal(e.Start(":8888"))
 }
 
