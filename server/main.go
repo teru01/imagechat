@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -24,7 +25,7 @@ func main() {
 	defer db.Close()
 	e := echo.New()
 
-    api := e.Group("/api")
+	api := e.Group("/api")
 	api.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Output: os.Stdout,
 	}))
@@ -35,7 +36,9 @@ func main() {
 		AllowHeaders:     []string{"Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"},
 	}))
 	api.Use(session.Middleware(Store))
-
+	api.GET("/health", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
+	})
 	api.GET("/", handlerWrapper(controller.IndexGet, db))
 	api.GET("/posts", handlerWrapper(controller.FetchPosts, db))
 	api.GET("/posts/:id", handlerWrapper(controller.FetchPost, db))

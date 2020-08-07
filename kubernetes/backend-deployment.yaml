@@ -42,12 +42,16 @@ spec:
           resources:
             limits:
               memory: "1000Mi"
-              cpu: "300m"
+              cpu: "100m"
             requests:
               memory: "250Mi"
-              cpu: "100m"
+              cpu: "10m"
           ports:
             - containerPort: 8888
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8888
         - name: cloud-sql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.17
           env:
@@ -66,6 +70,6 @@ spec:
               cpu: "70m"
             requests:
               memory: "128Mi"
-              cpu: "50m"
+              cpu: "10m"
           securityContext:
             runAsNonRoot: true
