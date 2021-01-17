@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io"
+	"net"
 	"net/http"
 	"os"
 
@@ -26,8 +28,17 @@ func main() {
 	e := echo.New()
 
 	api := e.Group("/api")
+
+	var output io.Writer = os.Stdout
+	raddr, err := net.ResolveUDPAddr("udp", "vector:50000")
+	if err == nil {
+		conn, err := net.DialUDP("udp", nil, raddr)
+		if err == nil {
+			output = io.MultiWriter(output, conn)
+		}
+	}
 	api.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Output: os.Stdout,
+		Output: output,
 	}))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"http://localhost:8080", "https://localhost:48080", "http://localhost", "https://localhost", "https://imagechat.ga"},
