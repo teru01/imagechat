@@ -42,6 +42,7 @@ services:
       - discovery.seed_hosts=odfe-node1,odfe-node2
       - cluster.initial_master_nodes=odfe-node1,odfe-node2
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - opendistro_security.disabled=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
     ulimits:
       memlock:
@@ -67,6 +68,7 @@ services:
       - discovery.seed_hosts=odfe-node1,odfe-node2
       - cluster.initial_master_nodes=odfe-node1,odfe-node2
       - bootstrap.memory_lock=true
+      - opendistro_security.disabled=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -81,15 +83,13 @@ services:
       - odfe-net
 
   kibana:
-    image: amazon/opendistro-for-elasticsearch-kibana:1.12.0
+    build: ./kibana
     container_name: odfe-kibana
     ports:
       - 5601:5601
-    expose:
-      - "5601"
     environment:
-      ELASTICSEARCH_URL: https://odfe-node1:9200
-      ELASTICSEARCH_HOSTS: https://odfe-node1:9200
+      ELASTICSEARCH_URL: http://odfe-node1:9200
+      ELASTICSEARCH_HOSTS: http://odfe-node1:9200
     networks:
       - odfe-net
 
