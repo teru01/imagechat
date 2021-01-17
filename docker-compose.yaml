@@ -97,8 +97,6 @@ services:
     image: timberio/vector:0.11.X-alpine
     volumes:
       - ./vector/vector.toml:/etc/vector/vector.toml:ro
-    env_file:
-      - vector/.env
     depends_on:
       - odfe-node1
     networks:
