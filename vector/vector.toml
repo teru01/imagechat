@@ -1,0 +1,37 @@
+[sources.origin]
+  type = "socket" # required
+  address = "0.0.0.0:50000" # required, required when mode = `tcp` or `udp`
+  mode = "udp" # required
+
+
+# [transforms.extract_host]
+#   type = "remap" # required
+#   inputs = ["origin"] # required
+#   source = '''
+#   .host = .host
+#   '''
+
+# [transforms.split_host_ip_port]
+#   type = "split"
+#   inputs = ["extract_host"]
+#   field = "host"
+#   separator = ":"
+#   field_names = ["address", "port"]
+
+[transforms.extract_message]
+  type = "json_parser" # required
+  inputs = ["origin"] # required
+  field = "message" # optional, default
+
+# [transforms.transform_host]
+#   # General
+#   type = "add_fields" # required
+#   inputs = ["extract_message", "split_host_ip_port"] # required
+#   overwrite = true # optional, default
+#   fields.host = "{{ address }}"
+
+[sinks.elastic]
+  type = "elasticsearch" # required
+  inputs = ["extract_message"] # required
+  endpoint = "http://odfe-node1:9200" # required
+  index = "echo-log-1-%F" # optional, default

@@ -30,7 +30,7 @@ func main() {
 	api := e.Group("/api")
 
 	var output io.Writer = os.Stdout
-	raddr, err := net.ResolveUDPAddr("udp", "vector:50000")
+	raddr, err := net.ResolveUDPAddr("udp", "vector-server:50000")
 	if err == nil {
 		conn, err := net.DialUDP("udp", nil, raddr)
 		if err == nil {
