@@ -12,7 +12,6 @@ import (
 	"github.com/teru01/image/server/controller"
 	"github.com/teru01/image/server/database"
 	customMiddleware "github.com/teru01/image/server/middleware"
-	"github.com/teru01/image/server/model"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
@@ -23,7 +22,6 @@ var Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 func main() {
 	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"), os.Getenv("QUERY_LOG_MODE"))
-	InitializeDB(db)
 	defer db.Close()
 	e := echo.New()
 
@@ -73,10 +71,4 @@ func handlerWrapper(f func(c *database.DBContext) error, db *gorm.DB) func(echo.
 	return func(ec echo.Context) error {
 		return f(&database.DBContext{ec, db})
 	}
-}
-
-func InitializeDB(db *gorm.DB) {
-	db.AutoMigrate(&model.Post{})
-	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Comment{})
 }
