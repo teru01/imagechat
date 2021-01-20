@@ -61,8 +61,9 @@ func main() {
 	api.GET("/session", handlerWrapper(controller.GetInfo, db), customMiddleware.SessionAuthentication)
 	api.DELETE("/session", handlerWrapper(controller.Logout, db), customMiddleware.SessionAuthentication)
 
-	api.POST("/comments", handlerWrapper(controller.CreateComment, db))
-	api.GET("/comments", handlerWrapper(controller.FetchComments, db))
+	api.POST("/:post_id/comments", handlerWrapper(controller.CreateComment, db))
+	api.GET("/:post_id/comments", handlerWrapper(controller.FetchComments, db))
+	// api.GET("/:post_id/comments/:id", handlerWrapper(controller.FetchComment, db))
 	e.Logger.Fatal(e.Start(":8888"))
 }
 
