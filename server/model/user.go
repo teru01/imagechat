@@ -42,12 +42,13 @@ func (user *User) SignUp(db *gorm.DB) error {
 		return err
 	}
 	user.Password = hashed
-
-	return user.Create(db)
+	_, err = user.Create(db)
+	return err
 }
 
-func (user *User) Create(db *gorm.DB) error {
-	return db.Create(user).Error
+func (user *User) Create(db *gorm.DB) (uint, error) {
+	result := db.Create(user)
+	return user.ID, result.Error
 }
 
 func hashPassword(original string) (string, error) {

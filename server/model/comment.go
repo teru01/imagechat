@@ -12,8 +12,9 @@ type Comment struct {
 	Content  string `json:"content" gorm:"not null"`
 }
 
-func (c *Comment) Create(db *gorm.DB, comment *Comment) (*Comment, error) {
-	return comment, db.Create(comment).Error
+func (c *Comment) Create(db *gorm.DB) (uint, error) {
+	result := db.Create(c)
+	return c.ID, result.Error
 }
 
 func (c *Comment) Select(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Comment, error) {
@@ -28,7 +29,7 @@ func (c *Comment) Select(db *gorm.DB, condition *map[string]interface{}, offset,
 	}
 	for records.Next() {
 		var c Comment
-		if err = records.Scan(&c.Model.ID, &c.Content, &c.UserName); err != nil {
+		if err = records.Scan(&c.ID, &c.Content, &c.UserName); err != nil {
 			return comments, err
 		}
 		comments = append(comments, c)
