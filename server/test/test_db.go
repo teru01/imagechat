@@ -4,8 +4,10 @@ import (
 	"log"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
+	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	"github.com/teru01/image/server/database"
@@ -17,7 +19,7 @@ var m *migrate.Migrate
 func InitializeDB(db *gorm.DB) {
 	var err error
 	driver, err := mysql.WithInstance(db.DB(), &mysql.Config{})
-	m, err = migrate.NewWithDatabaseInstance("file://../../mysql/migrations/", "myapp", driver)
+	m, err = migrate.NewWithDatabaseInstance("file:///Users/mirai/works/go/src/github.com/teru01/image/mysql/migrations", "myapp", driver)
 	if err != nil {
 		log.Fatal(err)
 	}
