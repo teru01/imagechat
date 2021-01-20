@@ -14,7 +14,7 @@ func CreateComment(c *database.DBContext) error {
 	if err := c.Bind(&comment); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	createdComment, err := comment.Create(c.Db, &comment)
+	createdComment, err := comment.Create(c.Db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
