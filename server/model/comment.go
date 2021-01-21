@@ -12,6 +12,14 @@ type Comment struct {
 	Content  string `json:"content" gorm:"not null"`
 }
 
+func NewComment(user_id, post_id uint, content string) *Comment {
+	return &Comment{
+		UserID:  user_id,
+		PostID:  post_id,
+		Content: content,
+	}
+}
+
 func (c *Comment) Create(db *gorm.DB) (uint, error) {
 	result := db.Create(c)
 	return c.ID, result.Error

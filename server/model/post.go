@@ -21,6 +21,14 @@ type Post struct {
 	UserName string `json:"user_name" gorm:"-"`
 }
 
+func NewPost(userID uint, name, image_url string) *Post {
+	return &Post{
+		UserID:   userID,
+		Name:     name,
+		ImageUrl: image_url,
+	}
+}
+
 func (p *Post) Submit(c *database.DBContext, fileHeader *multipart.FileHeader, postForm form.PostForm, uploader Uploader) error {
 	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
 	name := uuid.New().String() + fileExtension
