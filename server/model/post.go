@@ -21,6 +21,14 @@ type Post struct {
 	UserName string `json:"user_name" gorm:"-"`
 }
 
+func NewPost(userID uint, name, image_url string) *Post {
+	return &Post{
+		UserID:   userID,
+		Name:     name,
+		ImageUrl: image_url,
+	}
+}
+
 func (p *Post) Submit(c *database.DBContext, fileHeader *multipart.FileHeader, postForm form.PostForm, uploader Uploader) error {
 	fileExtension := strings.ToLower(path.Ext(fileHeader.Filename))
 	name := uuid.New().String() + fileExtension
@@ -38,11 +46,13 @@ func (p *Post) Submit(c *database.DBContext, fileHeader *multipart.FileHeader, p
 	p.ImageUrl = imageUrl
 	p.Name = postForm.Name
 	p.UserID = GetAuthSessionData(c, "user_id").(uint)
-	return p.Create(c.Db)
+	_, err = p.Create(c.Db)
+	return err
 }
 
-func (p *Post) Create(db *gorm.DB) error {
-	return db.Create(p).Error
+func (p *Post) Create(db *gorm.DB) (uint, error) {
+	result := db.Create(p)
+	return p.ID, result.Error
 }
 
 func (p *Post) Select(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Post, error) {
@@ -57,7 +67,7 @@ func (p *Post) Select(db *gorm.DB, condition *map[string]interface{}, offset, li
 	}
 	for records.Next() {
 		var p Post
-		if err = records.Scan(&p.Model.ID, &p.Name, &p.ImageUrl, &p.UserName); err != nil {
+		if err = records.Scan(&p.ID, &p.Name, &p.ImageUrl, &p.UserName); err != nil {
 			return posts, err
 		}
 		posts = append(posts, p)

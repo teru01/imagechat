@@ -4,22 +4,34 @@ import (
 	"log"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate"
+	"github.com/golang-migrate/migrate/database/mysql"
+	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/model"
 )
 
+var m *migrate.Migrate
+
 func InitializeDB(db *gorm.DB) {
-	db.AutoMigrate(&model.Post{})
-	db.AutoMigrate(&model.User{})
-	db.AutoMigrate(&model.Comment{})
+	var err error
+	driver, err := mysql.WithInstance(db.DB(), &mysql.Config{})
+	m, err = migrate.NewWithDatabaseInstance("file:///Users/mirai/works/go/src/github.com/teru01/image/mysql/migrations", "myapp", driver)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal(err)
+	}
 }
 
 func ResetDB(db *gorm.DB) {
-	db.DropTable(&model.Post{})
-	db.DropTable(&model.User{})
-	db.DropTable(&model.Comment{})
+	if err := m.Drop(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func SetUpDB() *gorm.DB {
@@ -39,7 +51,7 @@ func TearDownDB(db *gorm.DB) {
 
 func CreateSeedData(items []model.Creatable, db *gorm.DB) error {
 	for _, i := range items {
-		if err := i.Create(db); err != nil {
+		if _, err := i.Create(db); err != nil {
 			return err
 		}
 	}

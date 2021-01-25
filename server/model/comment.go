@@ -1,31 +1,37 @@
 package model
 
 import (
-	"time"
-
 	"github.com/jinzhu/gorm"
 )
 
 type Comment struct {
-	ID        uint      `json:"id" gorm:"primary_key;auto_increment;not null"`
-	UserID    uint      `json:"user_id" gorm:"not null"`
-	Content   string    `json:"content" gorm:"not null"`
-	CreatedAt time.Time `json:"created_at" gorm:"not null"`
-	UserName  string    `json:"user_name" gorm:"-"`
-	UserEmail string    `json:"user_email" gorm:"-"`
+	gorm.Model
+	UserID   uint   `json:"-" gorm:"not null"`
+	UserName string `json:"user_name" gorm:"-"`
+	PostID   uint   `json:"post_id" gorm:"not null"`
+	Content  string `json:"content" gorm:"not null"`
 }
 
-func CreateComment(db *gorm.DB, comment *Comment) (*Comment, error) {
-	comment.CreatedAt = time.Now()
-	return comment, db.Create(comment).Error
-}
-
-func FetchComments(db *gorm.DB, condition *map[string]interface{}) ([]Comment, error) {
-	comments := []Comment{}
-	if condition != nil {
-		db = db.Where(*condition)
+func NewComment(user_id, post_id uint, content string) *Comment {
+	return &Comment{
+		UserID:  user_id,
+		PostID:  post_id,
+		Content: content,
 	}
-	records, err := db.Table("comments").Select("comments.id, comments.content, users.name").Joins("join users on comments.user_id = users.id").Rows()
+}
+
+func (c *Comment) Create(db *gorm.DB) (uint, error) {
+	result := db.Create(c)
+	return c.ID, result.Error
+}
+
+func (c *Comment) Select(db *gorm.DB, condition *map[string]interface{}, offset, limit int) ([]Comment, error) {
+	comments := []Comment{}
+	query := db.Offset(offset).Limit(limit)
+	if condition != nil {
+		query = query.Where(*condition)
+	}
+	records, err := query.Table("comments").Select("comments.id, comments.content, users.name").Joins("join users on comments.user_id = users.id").Rows()
 	if err != nil {
 		return comments, err
 	}

@@ -17,24 +17,18 @@ import (
 	"github.com/teru01/image/server/test"
 )
 
-func makePost(userID uint, name, image_url string) *model.Post {
-	return &model.Post{
-		UserID:   userID,
-		Name:     name,
-		ImageUrl: image_url,
+func createTestUser(t *testing.T, db *gorm.DB) uint {
+	user := model.User{
+		Name:     "myuser",
+		Email:    "a@example.com",
+		Password: "xxxxx",
 	}
-}
-
-func createUser(t *testing.T, db *gorm.DB) {
 	if err := test.CreateSeedData([]model.Creatable{
-		&model.User{
-			Name:     "myuser",
-			Email:    "a@example.com",
-			Password: "xxxxx",
-		},
+		&user,
 	}, db); err != nil {
 		t.Fatal(err)
 	}
+	return user.ID
 }
 
 func TestCanGetSpecificPostByPathParam(t *testing.T) {
@@ -42,12 +36,12 @@ func TestCanGetSpecificPostByPathParam(t *testing.T) {
 	defer test.TearDownDB(db)
 	e := echo.New()
 
-	createUser(t, db)
-	target := makePost(1, "bar", "http://hoge.com/3434")
+	createTestUser(t, db)
+	target := model.NewPost(1, "bar", "http://hoge.com/3434")
 	if err := test.CreateSeedData([]model.Creatable{
-		makePost(1, "hogehoge", "http://hoge.com/1212"),
+		model.NewPost(1, "hogehoge", "http://hoge.com/1212"),
 		target,
-		makePost(1, "woo", "http://hoge.com/5656"),
+		model.NewPost(1, "woo", "http://hoge.com/5656"),
 	}, db); err != nil {
 		t.Fatal(err)
 	}
@@ -76,20 +70,20 @@ func TestCanGetSpecificPostsByQueryParameter(t *testing.T) {
 	db := test.SetUpDB()
 	defer test.TearDownDB(db)
 	e := echo.New()
-	createUser(t, db)
+	createTestUser(t, db)
 
 	var posts []model.Creatable
 
 	for i := 0; i < 2; i++ {
-		posts = append(posts, makePost(1, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
+		posts = append(posts, model.NewPost(1, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
 	}
 	targetPosts := []model.Creatable{
-		makePost(1, "qwrty", "http://example.com/a.png"),
-		makePost(1, "zxcvb", "http://example.com/b.png"),
+		model.NewPost(1, "qwrty", "http://example.com/a.png"),
+		model.NewPost(1, "zxcvb", "http://example.com/b.png"),
 	}
 	posts = append(posts, targetPosts...)
 	for i := 0; i < 2; i++ {
-		posts = append(posts, makePost(1, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
+		posts = append(posts, model.NewPost(1, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
 	}
 	if err := test.CreateSeedData(posts, db); err != nil {
 		t.Fatal(err)

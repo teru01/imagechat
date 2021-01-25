@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go v0.75.0 // indirect
 	cloud.google.com/go/storage v1.12.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/google/uuid v1.1.5
 	github.com/gorilla/sessions v1.2.1
 	github.com/jinzhu/copier v0.2.3
