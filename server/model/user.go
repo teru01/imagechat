@@ -18,6 +18,14 @@ type User struct {
 	Posts    []Post
 }
 
+func NewUser(name, email, password string) *User {
+	return &User{
+		Name:     name,
+		Email:    email,
+		Password: password,
+	}
+}
+
 func userAvailable(db *gorm.DB, name, email string) (bool, string) {
 	var users []User
 	db.Where("name = ?", name).Find(&users)
