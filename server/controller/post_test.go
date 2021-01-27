@@ -8,7 +8,6 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 	_ "github.com/proullon/ramsql/driver"
 	"github.com/stretchr/testify/assert"
@@ -16,20 +15,6 @@ import (
 	"github.com/teru01/image/server/model"
 	"github.com/teru01/image/server/test"
 )
-
-func createTestUser(t *testing.T, db *gorm.DB) uint {
-	user := model.User{
-		Name:     "myuser",
-		Email:    "a@example.com",
-		Password: "xxxxx",
-	}
-	if err := test.CreateSeedData([]model.Creatable{
-		&user,
-	}, db); err != nil {
-		t.Fatal(err)
-	}
-	return user.ID
-}
 
 func TestCanGetSpecificPostByPathParam(t *testing.T) {
 	db := test.SetUpDB()
