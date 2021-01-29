@@ -54,6 +54,7 @@ func main() {
 	api.POST("/posts", handlerWrapper(controller.SubmitPost, db), customMiddleware.SessionAuthentication)
 
 	api.POST("/users", handlerWrapper(controller.SignUp, db))
+	api.GET("/users/:id", handlerWrapper(controller.FetchUser, db))
 	// api.PUT("/users/:id", handlerWrapper(controller.UpdateUser, db))
 	// api.DELETE("/users/:id", handlerWrapper(controller.DeleteUser, db))
 

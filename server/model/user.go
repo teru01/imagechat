@@ -59,6 +59,12 @@ func (user *User) Create(db *gorm.DB) (uint, error) {
 	return user.ID, result.Error
 }
 
+func (user *User) SelectById(db *gorm.DB, id int) (User, error) {
+	u := User{}
+	result := db.First(&u, id)
+	return u, result.Error
+}
+
 func hashPassword(original string) (string, error) {
 	hashedPasswd, err := bcrypt.GenerateFromPassword([]byte(original), bcrypt.DefaultCost)
 	if err != nil {

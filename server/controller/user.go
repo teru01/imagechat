@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 	"github.com/teru01/image/server/database"
 	"github.com/teru01/image/server/model"
@@ -18,6 +21,21 @@ func SignUp(c *database.DBContext) error {
 	}
 
 	return c.NoContent(http.StatusCreated)
+}
+
+func FetchUser(c *database.DBContext) error {
+	var u *model.User
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound)
+	}
+	user, err := u.SelectById(c.Db, id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return echo.NewHTTPError(http.StatusNotFound)
+	} else if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, user)
 }
 
 // func UpdateUser(c *database.DBContext) error {
