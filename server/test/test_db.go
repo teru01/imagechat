@@ -36,7 +36,7 @@ func ResetDB(db *gorm.DB) {
 
 func SetUpDB() *gorm.DB {
 	err := godotenv.Load("../.env")
-	if err != nil && os.Getenv("CIRCLECI") != "" {
+	if err != nil && os.Getenv("CIRCLECI") == "" {
 		log.Fatal(err)
 	}
 	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_TEST_HOST"), os.Getenv("MYSQL_TEST_DATABASE"), "0")
