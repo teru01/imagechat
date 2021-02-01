@@ -19,7 +19,7 @@ var m *migrate.Migrate
 func InitializeDB(db *gorm.DB) {
 	var err error
 	driver, err := mysql.WithInstance(db.DB(), &mysql.Config{})
-	m, err = migrate.NewWithDatabaseInstance("file:///Users/mirai/works/go/src/github.com/teru01/image/mysql/migrations", "myapp", driver)
+	m, err = migrate.NewWithDatabaseInstance("file://../../mysql/migrations", "myapp", driver)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func ResetDB(db *gorm.DB) {
 
 func SetUpDB() *gorm.DB {
 	err := godotenv.Load("../.env")
-	if err != nil {
+	if err != nil && os.Getenv("CIRCLECI") != "" {
 		log.Fatal(err)
 	}
 	db := database.ConnectDB(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_TEST_HOST"), os.Getenv("MYSQL_TEST_DATABASE"), "0")

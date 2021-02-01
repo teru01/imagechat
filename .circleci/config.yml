@@ -28,6 +28,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_TEST_HOST: 127.0.0.1
           MYSQL_TEST_DATABASE: circle_test
+          CIRCLECI: 1
       - image: circleci/mysql:8.0-ram
     steps:
       - checkout
