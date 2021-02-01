@@ -1,7 +1,7 @@
 # Golang CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
-version: 2
+version: 2.1
 jobs:
   build-and-push:
     docker:
@@ -32,12 +32,13 @@ jobs:
       - image: circleci/mysql:8.0-ram
     steps:
       - checkout
-      - test:
+      - run:
           name: test
           command: go test -v ./...
           working_directory: server
 
 workflows:
+  version: 2.1
   build-and-test:
     jobs:
       - test
