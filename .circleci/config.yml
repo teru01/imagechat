@@ -1,0 +1,46 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build-and-push:
+    docker:
+      # specify the version
+      - image: docker:20.10.2
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t teru01/imagechat-backend:<< pipeline.git.revision >> -f ./server/Dockerfile.prod ./server
+      - run: docker build -t teru01/imagechat-frontend:<< pipeline.git.revision >> -f ./client/Dockerfile.prod ./client
+      - run:
+          name: push
+          command: |
+            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USER --password-stdin
+            docker push teru01/imagechat-backend:<< pipeline.git.revision >>
+            docker push teru01/imagechat-frontend:<< pipeline.git.revision >>
+  test:
+    docker:
+      - image: circleci/golang:1.15.0
+        environment:
+          MYSQL_USER: root
+          MYSQL_TEST_HOST: 127.0.0.1
+          MYSQL_TEST_DATABASE: circle_test
+      - image: circleci/mysql:8.0-ram
+    steps:
+      - checkout
+      - test:
+          name: test
+          command: go test -v ./...
+          working_directory: server
+
+workflows:
+  build-and-test:
+    jobs:
+      - test
+      - build-and-push:
+          requires:
+            - test
+          context: tutorial
