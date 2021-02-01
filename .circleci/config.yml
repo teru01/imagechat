@@ -12,7 +12,8 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 19.03.13
       - run: docker build -t teru01/imagechat-backend:<< pipeline.git.revision >> -f ./server/Dockerfile.prod ./server
       - run: docker build -t teru01/imagechat-frontend:<< pipeline.git.revision >> -f ./client/Dockerfile.prod ./client
       - run:
