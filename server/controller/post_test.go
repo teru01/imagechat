@@ -21,12 +21,12 @@ func TestCanGetSpecificPostByPathParam(t *testing.T) {
 	defer test.TearDownDB(db)
 	e := echo.New()
 
-	createTestUser(t, db)
-	target := model.NewPost(1, "bar", "http://hoge.com/3434")
+	user := createTestUser(t, db)
+	target := model.NewPost(user.ID, "bar", "http://hoge.com/3434")
 	if err := test.CreateSeedData([]model.Creatable{
-		model.NewPost(1, "hogehoge", "http://hoge.com/1212"),
+		model.NewPost(user.ID, "hogehoge", "http://hoge.com/1212"),
 		target,
-		model.NewPost(1, "woo", "http://hoge.com/5656"),
+		model.NewPost(user.ID, "woo", "http://hoge.com/5656"),
 	}, db); err != nil {
 		t.Fatal(err)
 	}
@@ -55,20 +55,20 @@ func TestCanGetSpecificPostsByQueryParameter(t *testing.T) {
 	db := test.SetUpDB()
 	defer test.TearDownDB(db)
 	e := echo.New()
-	createTestUser(t, db)
+	user := createTestUser(t, db)
 
 	var posts []model.Creatable
 
 	for i := 0; i < 2; i++ {
-		posts = append(posts, model.NewPost(1, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
+		posts = append(posts, model.NewPost(user.ID, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
 	}
 	targetPosts := []model.Creatable{
-		model.NewPost(1, "qwrty", "http://example.com/a.png"),
-		model.NewPost(1, "zxcvb", "http://example.com/b.png"),
+		model.NewPost(user.ID, "qwrty", "http://example.com/a.png"),
+		model.NewPost(user.ID, "zxcvb", "http://example.com/b.png"),
 	}
 	posts = append(posts, targetPosts...)
 	for i := 0; i < 2; i++ {
-		posts = append(posts, model.NewPost(1, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
+		posts = append(posts, model.NewPost(user.ID, fmt.Sprintf("name_%v", i), fmt.Sprintf("http://example.com/%v.png", i)))
 	}
 	if err := test.CreateSeedData(posts, db); err != nil {
 		t.Fatal(err)

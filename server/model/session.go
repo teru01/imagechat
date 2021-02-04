@@ -16,7 +16,10 @@ func NewSession(user *User, context *database.DBContext) (*Session, error) {
 	if err := user.ValidateLoginUser(context); err != nil {
 		return nil, err
 	}
+	return IssueSession(user, context)
+}
 
+func IssueSession(user *User, context *database.DBContext) (*Session, error) {
 	session, err := session.Get(SessionName, context)
 	if err != nil {
 		return nil, err

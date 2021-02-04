@@ -15,7 +15,7 @@ import (
 	"github.com/teru01/image/server/test"
 )
 
-func createTestUser(t *testing.T, db *gorm.DB) uint {
+func createTestUser(t *testing.T, db *gorm.DB) model.User {
 	user := model.User{
 		Name:     "myuser",
 		Email:    "a@example.com",
@@ -26,7 +26,7 @@ func createTestUser(t *testing.T, db *gorm.DB) uint {
 	}, db); err != nil {
 		t.Fatal(err)
 	}
-	return user.ID
+	return user
 }
 
 func TestCreateUser(t *testing.T) {

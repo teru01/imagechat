@@ -19,19 +19,19 @@ func TestCanPostComment(t *testing.T) {
 
 	e := echo.New()
 
-	userID := createTestUser(t, db)
-	post1 := model.NewPost(userID, "bar", "http://hoge.com/3434")
-	post2 := model.NewPost(userID, "mypost", "http://hoge.com/3434")
+	user := createTestUser(t, db)
+	post1 := model.NewPost(user.ID, "bar", "http://hoge.com/3434")
+	post2 := model.NewPost(user.ID, "mypost", "http://hoge.com/3434")
 	if err := test.CreateSeedData([]model.Creatable{
 		post1,
 		post2,
 	}, db); err != nil {
 		t.Fatal(err)
 	}
-	comment1 := model.NewComment(userID, post2.ID, "hello")
-	comment2 := model.NewComment(userID, post2.ID, "yap")
+	comment1 := model.NewComment(user.ID, post2.ID, "hello")
+	comment2 := model.NewComment(user.ID, post2.ID, "yap")
 	if err := test.CreateSeedData([]model.Creatable{
-		model.NewComment(userID, post1.ID, "great!"),
+		model.NewComment(user.ID, post1.ID, "great!"),
 		comment1,
 		comment2,
 	}, db); err != nil {
