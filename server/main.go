@@ -66,7 +66,7 @@ func main() {
 	api.GET("/:post_id/comments", handlerWrapper(controller.FetchComments, db))
 	// api.GET("/:post_id/comments/:id", handlerWrapper(controller.FetchComment, db))
 
-	api.POST("/follow/:user_id", handlerWrapper(controller.Follow, db))
+	api.POST("/follow/:user_id", handlerWrapper(controller.Follow, db), customMiddleware.SessionAuthentication)
 	e.Logger.Fatal(e.Start(":8888"))
 }
 
