@@ -13,13 +13,6 @@ type Session struct {
 const SessionName = "auth"
 
 func NewSession(user *User, context *database.DBContext) (*Session, error) {
-	if err := user.ValidateLoginUser(context); err != nil {
-		return nil, err
-	}
-	return IssueSession(user, context)
-}
-
-func IssueSession(user *User, context *database.DBContext) (*Session, error) {
 	session, err := session.Get(SessionName, context)
 	if err != nil {
 		return nil, err
@@ -42,10 +35,10 @@ func (s *Session) Set(key string, val interface{}) {
 	s.sess.Values[key] = val
 }
 
-func GetAuthSessionData(c *database.DBContext, key string) interface{} {
+func GetAuthSessionData(c *database.DBContext, key string) (interface{}, error) {
 	sess, err := session.Get(SessionName, c)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return sess.Values[key]
+	return sess.Values[key], nil
 }
