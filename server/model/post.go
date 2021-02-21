@@ -45,7 +45,11 @@ func (p *Post) Submit(c *database.DBContext, fileHeader *multipart.FileHeader, p
 	}
 	p.ImageUrl = imageUrl
 	p.Name = postForm.Name
-	p.UserID = GetAuthSessionData(c, "user_id").(uint)
+	uid, err := GetAuthSessionData(c, "user_id")
+	if err != nil {
+		return err
+	}
+	p.UserID = uid.(uint)
 	_, err = p.Create(c.Db)
 	return err
 }

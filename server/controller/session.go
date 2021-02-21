@@ -15,6 +15,9 @@ func Login(c *database.DBContext) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
+	if err := user.ValidateLoginUser(c); err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+	}
 	_, err := model.NewSession(&user, c)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
@@ -33,10 +36,14 @@ func Logout(c *database.DBContext) error {
 }
 
 func GetInfo(c *database.DBContext) error {
+	s, err := model.GetAuthSessionData(c, "name")
+	if err != nil {
+		return err
+	}
 	ret := struct {
 		Name string
 	}{
-		Name: model.GetAuthSessionData(c, "name").(string),
+		Name: s.(string),
 	}
 	return c.JSON(http.StatusOK, ret)
 }

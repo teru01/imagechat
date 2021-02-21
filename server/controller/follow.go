@@ -11,7 +11,11 @@ import (
 
 func Follow(c *database.DBContext) error {
 	var follow model.Follow
-	follow.UserID = model.GetAuthSessionData(c, "user_id").(uint)
+	if result, err := model.GetAuthSessionData(c, "user_id"); err != nil {
+		return err
+	} else {
+		follow.UserID = result.(uint)
+	}
 	i, err := strconv.ParseUint(c.Param("user_id"), 10, 64)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest)
